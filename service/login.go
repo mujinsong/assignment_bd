@@ -14,7 +14,7 @@ func Login(ctx context.Context, in model.Login) error {
 	//验证账号密码是否正确
 	userInfo := model.User{}
 	//检测有没有这个用户名
-	err := global.DB.WithContext(ctx).Where("id = ?", in.Username).Take(&userInfo).Error
+	err := global.DB.WithContext(ctx).Where("username = ?", in.Username).Take(&userInfo).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return errors.New("未注册")
 	}

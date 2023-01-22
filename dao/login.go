@@ -1,6 +1,10 @@
-package model
+package dao
 
 type Login struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+func (receiver Login) TableName() string {
+	return "users"
 }

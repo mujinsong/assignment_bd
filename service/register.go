@@ -1,9 +1,9 @@
 package service
 
 import (
+	"assignment_bd/dao"
 	"assignment_bd/global"
-	"assignment_bd/model"
-	"assignment_bd/utility"
+	"assignment_bd/utils"
 	"context"
 	"errors"
 	"github.com/gogf/gf/v2/util/grand"
@@ -11,7 +11,7 @@ import (
 )
 
 //todo 注册，因为和登录一样需要传入的都是用户名的密码，所以这里传model.Login(可改)
-func register(ctx context.Context, in *model.Login) (out *model.User, err error) {
+func register(ctx context.Context, in *dao.Login) (out *dao.User, err error) {
 	//密码用户名不能为空
 	if in.Password == "" || in.Username == "" {
 		return nil, errors.New("用户名和密码不能为空")
@@ -23,7 +23,7 @@ func register(ctx context.Context, in *model.Login) (out *model.User, err error)
 	}
 	//加密
 	userSalt := grand.S(10)
-	out.Password = utility.EncryptPassword(in.Password, userSalt)
+	out.Password = utils.EncryptPassword(in.Password, userSalt)
 	out.Username = in.Username
 	out.Salt = userSalt
 	//插入数据库

@@ -1,23 +1,22 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"tiktok/controller"
+
+	"github.com/gin-gonic/gin"
 )
 
 func initRouter(r *gin.Engine) {
-	// 静态文件
-	r.Static("/static", "./public")
+	// static file
+	r.Static("/public", "./static")
+
 	apiRouter := r.Group("/douyin")
 
-	// 测试接口
-	
-	apiRouter.GET("/test/", controller.Test)
-	// 基础接口	
-	// apiRouter.GET("/feed/", controller.Feed)
-	// apiRouter.GET("/user/", controller.UserInfo)
-	// apiRouter.POST("/user/register/", controller.Register)
-	// apiRouter.POST("/user/login/", controller.Login)
+	// 基础接口
+	apiRouter.GET("/feed/", controller.Feed)
+	apiRouter.GET("/user/", controller.UserInfo)
+	apiRouter.POST("/user/register/", controller.Register)
+	apiRouter.POST("/user/login/", controller.Login)
 	// apiRouter.POST("/publish/action/", controller.Publish)
 	// apiRouter.GET("/publish/list/", controller.PublishList)
 
@@ -34,4 +33,5 @@ func initRouter(r *gin.Engine) {
 	// apiRouter.GET("/relation/friend/list/", controller.FriendList)
 	// apiRouter.GET("/message/chat/", controller.MessageChat)
 	// apiRouter.POST("/message/action/", controller.MessageAction)
+
 }

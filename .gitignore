@@ -1,0 +1,10 @@
+# ide
+.vscode
+.ide
+.idea
+
+
+# bin and scripts
+*.exe
+*.bat
+*.vbs

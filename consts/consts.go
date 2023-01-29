@@ -1,6 +1,7 @@
 package consts
 
 const (
+	TOKEN_LENGTH            = 10
 	MIN_PASSWORD_PATTERN    = "^[_a-zA-Z0-9]{6,32}$"
 	MAX_USERNAME_LENGTH     = 30
 	GET_VIDEO_NUM           = 3

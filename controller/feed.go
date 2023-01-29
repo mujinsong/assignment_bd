@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/utils"
 	"net/http"
+	"strconv"
+	_ "strconv"
 	"time"
 )
 
@@ -69,54 +71,58 @@ func Feed(c *gin.Context) {
 		videoJson     dao.Video
 		user          dao.User
 		userJson      dao.User
-		//isFavoriteList []bool
-		//isFollowList   []bool
-		//isLogged       = false // 用户是否传入了合法有效的token（是否登录）
+		isLikeList    []bool
+		isFollowList  []bool
+		isLogged      = false // 用户是否传入了合法有效的token（是否登录）
 	)
 
-	//var userID uint64
-	//// 判断传入的token是否合法，用户是否存在
-	//if token := c.Query("token"); token != "" {
-	//	claims, err := util.ParseToken(token)
-	//	if err == nil {
-	//		// token合法
-	//		userID = claims.UserID
-	//		isLogged = true
-	//	}
-	//}
-	//
-	//if isLogged {
-	//	// 当用户登录时 批量获取用户是否点赞了列表中的视频以及是否关注了视频的作者
-	//	videoIDList := make([]uint64, numVideos)
-	//	userIDList := make([]uint64, numVideos)
-	//	for i, video := range videoList {
-	//		videoIDList[i] = video.VideoID
-	//		userIDList[i] = video.AuthorID
-	//	}
-	//	// 批量获取用户是否用视频点赞
-	//	isFavoriteList, err = service.GetFavoriteStatusList(userID, videoIDList)
-	//	if err != nil {
-	//		c.JSON(http.StatusInternalServerError, Response{StatusCode: 1, StatusMsg: err.Error()})
-	//		return
-	//	}
-	//	// 批量获取用户是否关注作者
-	//	isFollowList, err = service.GetFollowStatusList(userID, userIDList)
-	//	if err != nil {
-	//		c.JSON(http.StatusInternalServerError, Response{StatusCode: 1, StatusMsg: err.Error()})
-	//		return
-	//	}
-	//}
+	var userID uint
+	userID = 0
+	// 判断传入的token是否合法，用户是否存在
+	if token := c.Query("token"); token != "" {
+		//claims, err := util.ParseToken(token)
+		//if err == nil {
+		//	// token合法
+		//	userID = claims.UserID
+		//	isLogged = true
+		//}
+		t, _ := strconv.Atoi(c.Query("id"))
+		userID = uint(t)
+		isLogged = true
+	}
+
+	if isLogged {
+		// 当用户登录时 批量获取用户是否点赞了列表中的视频以及是否关注了视频的作者
+		videoIDList := make([]uint, numVideos)
+		userIDList := make([]uint, numVideos)
+		for i, video := range videoList {
+			videoIDList[i] = video.Id
+			userIDList[i] = video.UserId
+		}
+		// 批量获取用户是否用视频点赞
+		err = service.GetUserLikeListByVideoIDList(userID, videoIDList, &isLikeList)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, backend.Response{StatusCode: 1, StatusMsg: err.Error()})
+			return
+		}
+		// 批量获取用户是否关注作者
+		err = service.GetFollowStatusList(userID, userIDList, isFollowList)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, backend.Response{StatusCode: 1, StatusMsg: err.Error()})
+			return
+		}
+	}
 
 	// 未登录时默认为未关注未点赞
-	var isFavorite = false
+	var isLike = false
 	var isFollow = false
 
 	for i, video := range videoList {
-		//if isLogged {
-		//	// 当用户登录时，判断是否关注当前作者
-		//	isFollow = isFollowList[i]
-		//	isFavorite = isFavoriteList[i]
-		//}
+		if isLogged {
+			// 当用户登录时，判断是否关注当前作者
+			isFollow = isFollowList[i]
+			isLike = isLikeList[i]
+		}
 
 		// 二次确认返回的视频与封面是服务器存在的
 		//VideoLocation := filepath.Join(global.VIDEO_ADDR, video.PlayName)
@@ -133,8 +139,8 @@ func Feed(c *gin.Context) {
 		userJson.Username = user.Username
 		userJson.FollowCount = user.FollowCount
 		userJson.FollowerCount = user.FollowerCount
-		//userJson.TotalFavorited = user.TotalFavorited
-		//userJson.FavoriteCount = user.FavoriteCount
+		//userJson.TotalLiked = user.TotalLiked
+		//userJson.LikeCount = user.LikeCount
 		userJson.IsFollow = isFollow
 
 		videoJson.Id = video.Id
@@ -144,7 +150,7 @@ func Feed(c *gin.Context) {
 		videoJson.FavoriteCount = video.FavoriteCount
 		videoJson.CommentCount = video.CommentCount
 		videoJson.Title = video.Title
-		videoJson.IsFavorite = isFavorite
+		videoJson.IsFavorite = isLike
 
 		videoJsonList = append(videoJsonList, videoJson)
 	}

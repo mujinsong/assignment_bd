@@ -7,7 +7,7 @@ type User struct {
 	Username string    `json:"username,omitempty"`
 	Password string    `json:"password,omitempty"`
 	Salt     string    `json:"salt,omitempty"`
-	CreatAt  time.Time `json:"creat_at,omitempty"`
+	CreateAt time.Time `json:"create_at,omitempty"`
 }
 
 func (u User) TableName() string {

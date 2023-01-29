@@ -6,6 +6,7 @@ import (
 	"assignment_bd/utils"
 	_ "context"
 	"errors"
+	"time"
 )
 
 // Register todo 注册，因为和登录一样需要传入的都是用户名的密码，所以我这里传的model.Login(可改)
@@ -24,6 +25,9 @@ func Register(in *dao.Login) (out *dao.User, err error) {
 	out.Password = utils.EncryptPassword(in.Password, userSalt)
 	out.Username = in.Username
 	out.Salt = userSalt
+
+	out.CreateAt = time.Now()
+
 	//插入数据库
 	err = global.DB.Create(out).Error
 	return

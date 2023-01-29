@@ -7,7 +7,6 @@ import (
 	"assignment_bd/service"
 	"assignment_bd/utils"
 	"context"
-	"encoding/json"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -18,18 +17,18 @@ import (
 
 // Register 用户注册账号
 func Register(ctx context.Context, c *app.RequestContext) {
-	body, err := c.Body()
-	if err != nil {
-		panic(err)
-	}
-	var l dao.Login
-	if err := json.Unmarshal(body, &l); err != nil {
-		panic(err)
-	}
-	//username := c.Query("username")
-	//password := c.Query("password")
-	username := l.Username
-	password := l.Password
+	//body, err := c.Body()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//var l dao.Login
+	//if err := json.Unmarshal(body, &l); err != nil {
+	//	panic(err)
+	//}
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+	//username := l.Username
+	//password := l.Password
 	// 验证用户名合法性
 	if utf8.RuneCountInString(username) > consts.MAX_USERNAME_LENGTH ||
 		utf8.RuneCountInString(username) <= 0 {
@@ -58,9 +57,10 @@ func Register(ctx context.Context, c *app.RequestContext) {
 }
 
 // Login 用户登录
-func Login(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
+func Login(ctx context.Context, c *app.RequestContext) {
+
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 	// 从数据库查询用户信息
 	userModel, err := service.Login(dao.Login{Username: username, Password: password})
 	if err != nil {

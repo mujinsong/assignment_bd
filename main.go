@@ -13,7 +13,7 @@ import (
 func main() {
 	var err error
 	//数据库初始化，DB为全局变量
-	global.DB, err = gorm.Open(mysql.Open(config.DSN), &gorm.Config{})
+	global.DB, err = gorm.Open(mysql.Open(config.DSN_local), &gorm.Config{})
 	if err != nil {
 		panic("连接数据库失败, error=" + err.Error())
 	}
@@ -22,6 +22,7 @@ func main() {
 	r.Use(middleware.CorsMw())
 	middleware.JwtMwInit()
 	r.POST("/douyin/user/register/", controller.Register)
+	r.POST("/douyin/user/login/", controller.Login)
 	err = r.Run()
 	if err != nil {
 		return

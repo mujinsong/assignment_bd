@@ -28,7 +28,7 @@ type UserResponse struct {
 type UserInfoResponse struct {
 	StatusCode int64     `json:"status_code"` // 状态码，0-成功，其他值-失败
 	StatusMsg  *string   `json:"status_msg"`  // 返回状态描述
-	UserInfo   *UserInfo `json:"user_info"`   // 用户信息
+	UserInfo   *UserInfo `json:"user"`        // 用户信息
 }
 
 // UserInfo 是这个用户所有的信息（视频作者信息）
@@ -45,11 +45,11 @@ func Feed(c *gin.Context) {
 }
 
 func Register(c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
+	//username := c.PostForm("username")
+	//password := c.PostForm("password")
 
-	username = c.Query("username")
-	password = c.Query("password")
+	username := c.Query("username")
+	password := c.Query("password")
 
 	user := User{
 		Username: username,
@@ -60,10 +60,10 @@ func Register(c *gin.Context) {
 
 	result := config.DB.Create(&user) // 通过数据的指针来创建
 
-	code := int64(1)
+	code := int64(0)
 	msg := "用户注册成功"
 	if result.Error != nil {
-		code = 0
+		code = 1
 		msg = "用户注册失败"
 		fmt.Println(result.Error)        // 返回 error
 		fmt.Println(result.RowsAffected) // 返回插入记录的条数
@@ -91,10 +91,10 @@ func Login(c *gin.Context) {
 
 	fmt.Println(user)
 
-	code := int64(1)
+	code := int64(0)
 	msg := "用户登录成功"
 	if result.Error != nil {
-		code = 0
+		code = 1
 		msg = "用户登录失败"
 		fmt.Println(result.Error)        // 返回 error
 		fmt.Println(result.RowsAffected) // 返回插入记录的条数
@@ -108,13 +108,15 @@ func Login(c *gin.Context) {
 	})
 }
 
+// GetUserInfo 用来获取用户的详细信息
+// TODO 用户的的关注信息等等都是写死的，因为还没有实现关注功能
 func GetUserInfo(c *gin.Context) {
 	var user User
 	id := c.Query("user_id")
 
 	result := config.DB.First(&user, id)
 
-	code := int64(1)
+	code := int64(0)
 	msg := "用户信息获取成功"
 	if result.Error != nil {
 		msg = "用户信息获取失败"

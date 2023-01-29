@@ -7,12 +7,13 @@ import (
 	"tiktok/config"
 )
 
-// FavoriteAction no practical effect, just check if token is valid
+// FavoriteAction 对视频点赞和取消点赞的操作
 func FavoriteAction(c *gin.Context) {
 
 }
 
-// GetFavoriteList all users have same favorite video list
+// GetFavoriteList 从数据库中查询当前用户，并查询当前用户点赞过的视频
+// TODO 这里的视频列表里的视频也都是写死的，以后可以考虑用 oss 来存储，数据库里存储 URL
 func GetFavoriteList(c *gin.Context) {
 	var user User
 	id := c.Query("user_id")

@@ -25,13 +25,14 @@ type Video struct {
 	Title         string   `json:"title"`          // 视频标题
 }
 
-// Publish check token then save upload file to public directory
+// Publish 发布视频的操作
 func Publish(c *gin.Context) {
 	//token := c.PostForm("token")
 
 }
 
-// PublishList all users have same publish video list
+// PublishList 根据 user_id 查询用户 id，再查询这个用户发布的视频
+// TODO 这里的视频列表里的视频都是写死的，以后可以考虑用 oss 来存储，数据库里存储 URL
 func PublishList(c *gin.Context) {
 	var user User
 	id := c.Query("user_id")
@@ -43,7 +44,7 @@ func PublishList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, VideoListResponse{
-		StatusCode: 1,
+		StatusCode: 0,
 		StatusMsg:  nil,
 		VideoList: []Video{
 			{

@@ -2,6 +2,7 @@ package main
 
 import (
 	"assignment_bd/config"
+	"assignment_bd/controller"
 	"assignment_bd/global"
 	"assignment_bd/middleware"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -20,6 +21,7 @@ func main() {
 	r := server.Default()
 	r.Use(middleware.CorsMw())
 	middleware.JwtMwInit()
+	r.POST("/douyin/user/register/", controller.Register)
 	err = r.Run()
 	if err != nil {
 		return

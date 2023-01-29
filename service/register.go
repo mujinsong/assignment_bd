@@ -6,7 +6,6 @@ import (
 	"assignment_bd/utils"
 	_ "context"
 	"errors"
-	"github.com/gogf/gf/v2/util/grand"
 )
 
 // Register todo 注册，因为和登录一样需要传入的都是用户名的密码，所以我这里传的model.Login(可改)
@@ -21,7 +20,7 @@ func Register(in *dao.Login) (out *dao.User, err error) {
 		return nil, errors.New("已有该用户名，请登录或换一个用户名注册")
 	}
 	//加密
-	userSalt := grand.S(10)
+	userSalt := utils.RandStr(10)
 	out.Password = utils.EncryptPassword(in.Password, userSalt)
 	out.Username = in.Username
 	out.Salt = userSalt

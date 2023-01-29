@@ -48,7 +48,7 @@ func GetVideoListByIDs(ctx *gin.Context, videoList *[]dao.Video, videoIDs []uint
 		return err
 	}
 	//todo
-	err := GetLikeCountListByVideoIDList(ctx, videoIDs, &likeCountList)
+	err := GetLikeCountListByVideoIDList(videoIDs, &likeCountList)
 	if err != nil {
 		return err
 	}

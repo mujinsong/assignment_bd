@@ -115,12 +115,12 @@ func Feed(c *gin.Context) {
 
 	// 未登录时默认为未关注未点赞
 	var isLike = false
-	var isFollow = false
+	//var isFollow = false
 
 	for i, video := range videoList {
 		if isLogged {
 			// 当用户登录时，判断是否关注当前作者
-			isFollow = isFollowList[i]
+			//isFollow = isFollowList[i]
 			isLike = isLikeList[i]
 		}
 
@@ -137,11 +137,11 @@ func Feed(c *gin.Context) {
 		user = userList[i]
 		userJson.Id = user.Id
 		userJson.Username = user.Username
-		userJson.FollowCount = user.FollowCount
-		userJson.FollowerCount = user.FollowerCount
+		//userJson.FollowCount = user.FollowCount
+		//userJson.FollowerCount = user.FollowerCount
 		//userJson.TotalLiked = user.TotalLiked
 		//userJson.LikeCount = user.LikeCount
-		userJson.IsFollow = isFollow
+		//userJson.IsFollow = isFollow
 
 		videoJson.Id = video.Id
 		videoJson.UserId = userJson.Id

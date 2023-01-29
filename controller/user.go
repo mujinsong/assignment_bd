@@ -6,6 +6,9 @@ import (
 	"assignment_bd/dao"
 	"assignment_bd/service"
 	"assignment_bd/utils"
+	"context"
+	"encoding/json"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
@@ -14,9 +17,19 @@ import (
 )
 
 // Register 用户注册账号
-func Register(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
+func Register(ctx context.Context, c *app.RequestContext) {
+	body, err := c.Body()
+	if err != nil {
+		panic(err)
+	}
+	var l dao.Login
+	if err := json.Unmarshal(body, &l); err != nil {
+		panic(err)
+	}
+	//username := c.Query("username")
+	//password := c.Query("password")
+	username := l.Username
+	password := l.Password
 	// 验证用户名合法性
 	if utf8.RuneCountInString(username) > consts.MAX_USERNAME_LENGTH ||
 		utf8.RuneCountInString(username) <= 0 {
@@ -35,11 +48,10 @@ func Register(c *gin.Context) {
 		return
 	}
 	// 生成对应 token
-
 	tokenString := utils.RandStr(consts.TOKEN_LENGTH)
 	// 返回成功并生成响应 json
 	c.JSON(http.StatusOK, backend.UserLoginResponse{
-		Response: backend.Response{StatusCode: 0, StatusMsg: "OK"},
+		Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
 		UserID:   uint64(userModel.Id),
 		Token:    tokenString,
 	})
@@ -79,24 +91,24 @@ func UserInfo(c *gin.Context) {
 		return
 	}
 	// 获取当前用户的 ID
-	viewerID := c.GetUint64("UserID")
+	//viewerID := c.GetUint64("UserID")
 	// 查询当前用户是否关注指定用户
-	isFollow, err := service.GetFollowStatus(viewerID, userID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, backend.Response{StatusCode: 1, StatusMsg: err.Error()})
-		return
-	}
+	//isFollow, err := service.GetFollowStatus(viewerID, userID)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, backend.Response{StatusCode: 1, StatusMsg: err.Error()})
+	//	return
+	//}
 	// 返回成功并生成响应 json
 	c.JSON(http.StatusOK, backend.UserResponse{
 		Response: backend.Response{StatusCode: 0, StatusMsg: "OK"},
 		User: dao.User{
-			Id:            uint(userID),
-			Username:      userModel.Username,
-			FollowCount:   userModel.FollowCount,
-			FollowerCount: userModel.FollowerCount,
+			Id:       uint(userID),
+			Username: userModel.Username,
+			//FollowCount:   userModel.FollowCount,
+			//FollowerCount: userModel.FollowerCount,
 			//TotalFavorited: userModel.TotalFavorited,
 			//FavoriteCount:  userModel.FavoriteCount,
-			IsFollow: isFollow,
+			//IsFollow: isFollow,
 		},
 	})
 }

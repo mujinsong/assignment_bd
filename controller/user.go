@@ -5,6 +5,7 @@ import (
 	"assignment_bd/consts"
 	"assignment_bd/dao"
 	"assignment_bd/service"
+	"assignment_bd/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
@@ -34,12 +35,8 @@ func Register(c *gin.Context) {
 		return
 	}
 	// 生成对应 token
-	tokenString := ""
-	//tokenString, err := util.GenerateToken(userModel)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, Response{StatusCode: 1, StatusMsg: err.Error()})
-	//	return
-	//}
+
+	tokenString := utils.RandStr(consts.TOKEN_LENGTH)
 	// 返回成功并生成响应 json
 	c.JSON(http.StatusOK, backend.UserLoginResponse{
 		Response: backend.Response{StatusCode: 0, StatusMsg: "OK"},
@@ -59,12 +56,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	// 生成对应 token
-	tokenString := ""
-	//tokenString, err := util.GenerateToken(userModel)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, Response{StatusCode: 1, StatusMsg: err.Error()})
-	//	return
-	//}
+	tokenString := utils.RandStr(consts.TOKEN_LENGTH)
 	// 返回成功并生成响应 json
 	c.JSON(http.StatusOK, backend.UserLoginResponse{
 		Response: backend.Response{StatusCode: 0, StatusMsg: "OK"},

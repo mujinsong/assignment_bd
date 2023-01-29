@@ -1,6 +1,9 @@
 package consts
 
 const (
+	MIN_PASSWORD_PATTERN    = "^[_a-zA-Z0-9]{6,32}$"
+	MAX_USERNAME_LENGTH     = 30
+	GET_VIDEO_NUM           = 3
 	SUCCESS                 = 200
 	UPDATE_PASSWORD_SUCCESS = 201
 	NOT_EXIST_IDENTIFIER    = 202

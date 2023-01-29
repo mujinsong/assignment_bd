@@ -5,8 +5,30 @@ import (
 	"assignment_bd/global"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
+// GetFeedVideosAndAuthors 获取推送视频以及其作者并返回视频数
+func GetFeedVideosAndAuthors(videoList *[]dao.Video, users *[]dao.User, LatestTime time.Time, MaxNumVideo int) (int, error) {
+
+	result := global.DB.Model(&dao.Video{}).Select("id,user_id").Where("created_at > ?", LatestTime).Order("created_at DESC").Limit(MaxNumVideo).Find(videoList)
+	if result.RowsAffected == 0 {
+		return 0, errors.New("没视频")
+	}
+
+	numVideos := len(*videoList)
+
+	// 批量或者视频作者
+	userIDList := make([]uint, numVideos)
+	for i, video := range *videoList {
+		userIDList[i] = video.UserId
+	}
+	result = global.DB.Model(&dao.User{}).Where("user_id IN ?", userIDList).Find(users)
+	if result.RowsAffected == 0 {
+		return 0, errors.New("没作者")
+	}
+	return numVideos, nil
+}
 func GetVideoListByIDs(ctx *gin.Context, videoList *[]dao.Video, videoIDs []uint) error {
 	var uniqueVideoList []dao.Video
 	result := global.DB.Where("video_id in ?", videoIDs).Find(&uniqueVideoList)

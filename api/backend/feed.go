@@ -2,10 +2,11 @@ package backend
 
 import (
 	"assignment_bd/dao"
+	"time"
 )
 
 type FeedResponse struct {
 	Response
 	VideoList []dao.Video `json:"video_list,omitempty"`
-	NextTime  int64       `json:"next_time,omitempty"`
+	NextTime  time.Time   `json:"next_time,omitempty"`
 }

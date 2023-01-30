@@ -13,3 +13,13 @@
 | service    | 核心处理函数，一般被controller调用                            |
 | middleware | 中间件                                               |
 | utils      | 工具函数，写一些不相关的                                      |
+
+- 大作业
+
+- git示例操作
+  ```
+  git branch -m main devlop
+  git fetch origin
+  git branch -u origin/devlop devlop
+  git remote set-head origin -a
+  ```

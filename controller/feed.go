@@ -5,7 +5,8 @@ import (
 	"assignment_bd/consts"
 	"assignment_bd/dao"
 	"assignment_bd/service"
-	"github.com/gin-gonic/gin"
+	"context"
+	"github.com/cloudwego/hertz/pkg/app"
 	"gorm.io/gorm/utils"
 	"net/http"
 	"strconv"
@@ -31,7 +32,7 @@ import (
 //}
 
 // Feed 视频流接口（给客户端推送短视频）
-func Feed(c *gin.Context) {
+func Feed(ctx context.Context, c *app.RequestContext) {
 	// 不传latest_time默认为当前时间
 	var CurrentTime = time.Now()
 	var CurrentTimeStr = utils.ToString(CurrentTime)
@@ -145,8 +146,8 @@ func Feed(c *gin.Context) {
 
 		videoJson.Id = video.Id
 		videoJson.UserId = userJson.Id
-		videoJson.PlayUrl = "http://" + c.Request.Host + "/static/video/" + video.PlayUrl
-		videoJson.CoverUrl = "http://" + c.Request.Host + "/static/cover/" + video.CoverUrl
+		videoJson.PlayUrl = "http://" + (string)(c.Request.Host()) + "/static/video/" + video.PlayUrl
+		videoJson.CoverUrl = "http://" + string(c.Request.Host()) + "/static/cover/" + video.CoverUrl
 		videoJson.FavoriteCount = video.FavoriteCount
 		videoJson.CommentCount = video.CommentCount
 		videoJson.Title = video.Title

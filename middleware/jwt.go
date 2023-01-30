@@ -69,7 +69,7 @@ func JwtMwInit() {
 			if err := c.BindAndValidate(&loginUser); err != nil {
 				return "", errors.New("数据绑定错误")
 			}
-			logined, err := service.Login(loginUser)
+			logined, err := service.Login(&loginUser)
 			if err != nil {
 				return nil, err
 			}

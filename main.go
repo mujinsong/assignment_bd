@@ -23,6 +23,7 @@ func main() {
 	middleware.JwtMwInit()
 	r.POST("/douyin/user/register/", controller.Register)
 	r.POST("/douyin/user/login/", controller.Login)
+	r.GET("/douyin/feed/", controller.Feed)
 	err = r.Run()
 	if err != nil {
 		return

@@ -47,7 +47,6 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	var videoList []dao.Video
 	var userList []dao.User
 	numVideos, err := service.GetFeedVideosAndAuthors(&videoList, &userList, LatestTime, consts.GET_VIDEO_NUM)
-
 	if err != nil {
 		// 访问数据库出错
 		c.JSON(http.StatusInternalServerError, backend.Response{StatusCode: 1, StatusMsg: err.Error()})

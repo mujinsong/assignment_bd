@@ -4,7 +4,44 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cbc92575-b15e-4801-9a57-22e298c43cf6" name="Changes" comment="修了一点登录的小bug" />
+    <list default="true" id="cbc92575-b15e-4801-9a57-22e298c43cf6" name="Changes" comment="修了一点登录的小bug">
+      <change afterPath="$PROJECT_DIR$/controller/message.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/relation.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/response.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/backend/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/backend/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/backend/feed.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/backend/feed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/backend/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/backend/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/dsnConfig.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/consts/const.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/consts/consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/consts/consts.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/favorite.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/favorite.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/feed.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/feed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/publish.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/publish.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/comment.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/comment.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/follow.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/follow.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/like.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/like.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/login.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/login.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dao/video.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/video.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middleware/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/jwt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/follow.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/follow.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/like.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/like.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/login.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/register.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/vediofeed.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/vediofeed.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +62,9 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="true" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -68,7 +108,16 @@
       <recent name="C:\Users\leepanker\GolandProjects\assignment_bd\controller\user" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Build.go build assignment_bd">
+    <configuration name="go build assignment_bd" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="assignment_bd" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="assignment_bd" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build tiktok" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="assignment_bd" />
       <working_directory value="$PROJECT_DIR$" />
@@ -78,8 +127,22 @@
       <filePath value="$PROJECT_DIR$/main.go" />
       <method v="2" />
     </configuration>
+    <configuration name="TestHerzt in assignment_bd/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="assignment_bd" />
+      <working_directory value="$PROJECT_DIR$/test" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="assignment_bd/test" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestHerzt\E$" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build assignment_bd" />
+        <item itemvalue="Go Test.TestHerzt in assignment_bd/test" />
         <item itemvalue="Go Build.go build tiktok" />
       </list>
     </recent_temporary>
@@ -93,19 +156,7 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="devlop" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
+            <State />
           </value>
         </entry>
       </map>

@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"assignment_bd/consts"
-	"assignment_bd/dao"
 	"assignment_bd/global"
+	"assignment_bd/model"
 	"assignment_bd/service"
 	"assignment_bd/utils"
 	"context"
@@ -65,7 +65,7 @@ func JwtMwInit() {
 		},
 		// 认证
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
-			var loginUser dao.Login
+			var loginUser model.Login
 			if err := c.BindAndValidate(&loginUser); err != nil {
 				return "", errors.New("数据绑定错误")
 			}

@@ -1,4 +1,4 @@
-package dao
+package model
 
 type Message struct {
 	Id         int64  `json:"id,omitempty"`

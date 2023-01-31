@@ -1,4 +1,4 @@
-package dao
+package model
 
 type Follow struct {
 	ID         uint `json:"id"`

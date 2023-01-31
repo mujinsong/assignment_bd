@@ -1,6 +1,6 @@
 package backend
 
-import "assignment_bd/dao"
+import "assignment_bd/model"
 
 // UserLoginResponse 用户登录响应结构体
 type UserLoginResponse struct {
@@ -12,5 +12,5 @@ type UserLoginResponse struct {
 // UserResponse 用户信息响应结构体
 type UserResponse struct {
 	Response
-	User dao.User `json:"user"`
+	User model.User `json:"user"`
 }

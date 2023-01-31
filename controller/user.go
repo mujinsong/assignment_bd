@@ -3,38 +3,22 @@ package controller
 import (
 	"assignment_bd/api/backend"
 	"assignment_bd/consts"
-	"assignment_bd/dao"
+	"assignment_bd/model"
 	"assignment_bd/service"
 	"assignment_bd/utils"
 	"context"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"regexp"
 	"strconv"
-	"unicode/utf8"
 )
 
 // Register 用户注册账号
 func Register(ctx context.Context, c *app.RequestContext) {
 	username := c.Query("username")
 	password := c.Query("password")
-	//username := l.Username
-	//password := l.Password
-	// 验证用户名合法性
-	if utf8.RuneCountInString(username) > consts.MAX_USERNAME_LENGTH ||
-		utf8.RuneCountInString(username) <= 0 {
-		c.JSON(http.StatusOK, backend.Response{StatusCode: 1, StatusMsg: "非法用户名"})
-		return
-	}
-	// 验证密码合法性
-	if ok, _ := regexp.MatchString(consts.MIN_PASSWORD_PATTERN, password); !ok {
-		c.JSON(http.StatusOK, backend.Response{StatusCode: 1, StatusMsg: "密码长度6-32，由字母大小写下划线组成"})
-		return
-	}
 	// 注册用户到数据库
-	userModel, err := service.Register(&dao.Login{Username: username, Password: password})
+	userModel, err := service.Register(&model.Login{Username: username, Password: password})
 	if err != nil {
 		c.JSON(http.StatusOK, backend.Response{StatusCode: 1, StatusMsg: err.Error()})
 		return
@@ -54,9 +38,9 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	//fmt.Println(c)
 	username := c.Query("username")
 	password := c.Query("password")
-	fmt.Println("mes:", username, password)
+	//fmt.Println("mes:", username, password)
 	// 从数据库查询用户信息
-	userModel, err := service.Login(&dao.Login{Username: username, Password: password})
+	userModel, err := service.Login(&model.Login{Username: username, Password: password})
 	if err != nil {
 		c.JSON(http.StatusOK, backend.Response{StatusCode: 1, StatusMsg: "用户名或密码错误"})
 		return
@@ -95,7 +79,7 @@ func UserInfo(c *gin.Context) {
 	// 返回成功并生成响应 json
 	c.JSON(http.StatusOK, backend.UserResponse{
 		Response: backend.Response{StatusCode: 0, StatusMsg: "OK"},
-		User: dao.User{
+		User: model.User{
 			Id:       uint(userID),
 			Username: userModel.Username,
 			//FollowCount:   userModel.FollowCount,

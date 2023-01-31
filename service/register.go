@@ -1,8 +1,8 @@
 package service
 
 import (
-	"assignment_bd/dao"
 	"assignment_bd/global"
+	"assignment_bd/model"
 	"assignment_bd/utils"
 	_ "context"
 	"errors"
@@ -10,10 +10,10 @@ import (
 )
 
 // Register todo 注册，因为和登录一样需要传入的都是用户名的密码，所以我这里传的model.Login(可改)
-func Register(in *dao.Login) (out *dao.User, err error) {
-	//密码用户名不能为空
-	if in.Password == "" || in.Username == "" {
-		return nil, errors.New("用户名和密码不能为空")
+func Register(in *model.Login) (out *model.User, err error) {
+	verift, err := utils.VerifyUsernamePassword(in.Username, in.Password)
+	if !verift {
+		return nil, err
 	}
 	//查询是否已有该用户名
 	result := global.DB.Where("username = ?", in.Username).Take(&out)

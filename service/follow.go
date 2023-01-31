@@ -1,8 +1,8 @@
 package service
 
 import (
-	"assignment_bd/dao"
 	"assignment_bd/global"
+	"assignment_bd/model"
 )
 
 // GetFollowStatusForUpdate 获取关注状态，此处是针对 AddFollow 和 CancelFollow
@@ -22,8 +22,8 @@ func GetFollowStatus(followerID, userID uint64) (bool, error) {
 	//	return followStatus, nil
 	//}
 	//return false, err
-	followst := &dao.Follow{}
-	if result := global.DB.Select("user_id", "action_type").Model(&dao.Follow{}).
+	followst := &model.Follow{}
+	if result := global.DB.Select("user_id", "action_type").Model(&model.Follow{}).
 		Where("follower_id = ? AND user_id = ?", followerID, userID).Take(followst); result.Error != nil {
 		return false, result.Error
 
@@ -35,8 +35,8 @@ func GetFollowStatus(followerID, userID uint64) (bool, error) {
 }
 
 func GetFollowStatusList(followerID uint, userIDList []uint, isfollowerList []bool) error {
-	var temp []dao.Follow
-	if result := global.DB.Select("user_id", "action_type").Model(&dao.Follow{}).
+	var temp []model.Follow
+	if result := global.DB.Select("user_id", "action_type").Model(&model.Follow{}).
 		Where("follower_id = ? AND user_id IN ?", followerID, userIDList).Find(&temp); result.Error != nil {
 		return result.Error
 	}

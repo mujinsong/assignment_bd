@@ -1,8 +1,8 @@
 package service
 
 import (
-	"assignment_bd/dao"
 	"assignment_bd/global"
+	"assignment_bd/model"
 	"assignment_bd/utils"
 	"errors"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 )
 
 // Login 执行登录
-func Login(in *dao.Login) (user *dao.User, err error) {
+func Login(in *model.Login) (user *model.User, err error) {
 	//检测有没有这个用户名
 	fmt.Println(in)
 	err = global.DB.Where("username = ?", in.Username).Take(&user).Error

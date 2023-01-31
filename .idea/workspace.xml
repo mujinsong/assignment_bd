@@ -4,43 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cbc92575-b15e-4801-9a57-22e298c43cf6" name="Changes" comment="修了一点登录的小bug">
-      <change afterPath="$PROJECT_DIR$/controller/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/controller/relation.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/response.go" afterDir="false" />
+    <list default="true" id="cbc92575-b15e-4801-9a57-22e298c43cf6" name="Changes" comment="写了一下个人信息功能，然后优化了一下项目结构">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/backend/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/backend/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/backend/feed.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/backend/feed.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/backend/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/backend/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/default.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/dsnConfig.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/consts/const.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/consts/consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/consts/consts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/favorite.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/favorite.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/feed.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/feed.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/publish.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/publish.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/comment.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/comment.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/follow.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/follow.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/like.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/like.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/login.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/login.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/video.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/video.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/jwt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/follow.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/follow.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/like.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/like.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/register.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/vediofeed.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/vediofeed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/backend/common.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/backend/feed.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/backend/login.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/backend/user.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +150,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="写一个用户登录的小demo（失败了qaq）" />
     <MESSAGE value="修了一点登录的小bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="修了一点登录的小bug" />
+    <MESSAGE value="写了一下个人信息功能，然后优化了一下项目结构" />
+    <option name="LAST_COMMIT_MESSAGE" value="写了一下个人信息功能，然后优化了一下项目结构" />
   </component>
   <component name="VgoProject">
     <environment>

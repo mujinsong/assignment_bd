@@ -7,8 +7,8 @@ import (
 
 // GetFollowStatusForUpdate 获取关注状态，此处是针对 AddFollow 和 CancelFollow
 //func GetFollowStatusForUpdate(followerID, userID uint64) (bool, error) {
-//	var followList []dao.Follow
-//	if result := global.DB.Select("user_id", "action_type").Model(&dao.Follow{}).
+//	var followList []model.Follow
+//	if result := global.DB.Select("user_id", "action_type").Model(&model.Follow{}).
 //		Where("follower_id = ?", followerID).Find(&followList); result.Error != nil {
 //		return false, result.Error
 //	}

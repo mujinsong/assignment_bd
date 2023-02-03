@@ -3,14 +3,15 @@ package main
 import (
 	"assignment_bd/controller"
 	"assignment_bd/global"
+	"assignment_bd/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func initRouter(r *server.Hertz) {
 	//todo 这块随便写的，后续改
-	//r.Use(middleware.CorsMw())
-	//middleware.JwtMwInit()
+	r.Use(middleware.CorsMw())
+	middleware.JwtMwInit()
 
 	apiRouter := r.Group("/douyin")
 	{

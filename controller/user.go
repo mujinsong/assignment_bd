@@ -80,13 +80,11 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 			StatusMsg:  "进入个人信息页面",
 		},
 		UserInfo: &model.UserInfo{
-			//User: *userModel,
 			ID:            userModel.Id,
 			Name:          userModel.Username,
-			FollowCount:   3,
-			FollowerCount: 3,
+			FollowCount:   0,
+			FollowerCount: 0,
 			IsFollow:      false,
-			Avatar:        "http://img.panker916.space/32bf3ac8c3e1420bafee3ab84cb5f17e",
 		},
 	})
 }

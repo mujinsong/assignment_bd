@@ -71,9 +71,9 @@ func MyJwt() {
 
 			claims := jwt.ExtractClaims(ctx, c)
 			fmt.Println("claims:", claims)
-			fmt.Println("nothing else matter", uint(claims[IdentityKey].(float64)))
+			fmt.Println("nothing else matter", int(claims[IdentityKey].(float64)))
 			return &model.User{
-				Id: uint(claims[IdentityKey].(float64)),
+				Id: int64(int(claims[IdentityKey].(float64))),
 			}
 		},
 		//通过授权者

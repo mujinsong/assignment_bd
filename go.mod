@@ -8,6 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.3.1
 	github.com/hertz-contrib/cors v0.0.0-20220601061225-50f4e582beaf
 	github.com/hertz-contrib/jwt v1.0.2
+	github.com/satori/go.uuid v1.2.0
 	gorm.io/driver/mysql v1.4.5
 	gorm.io/gorm v1.24.3
 )

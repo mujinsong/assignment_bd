@@ -19,7 +19,7 @@ func GetFeedVideosAndAuthors(videoList *[]model.Video, users *[]model.User, Late
 	numVideos := len(*videoList)
 
 	// 批量或者视频作者
-	userIDList := make([]int, numVideos)
+	userIDList := make([]int64, numVideos)
 	for i, video := range *videoList {
 		userIDList[i] = video.UserId
 	}
@@ -63,7 +63,7 @@ func GetVideoListByIDs(ctx *gin.Context, videoList *[]model.Video, videoIDs []in
 }
 
 // GetVideoIDListByUserID 得到用户发表过的视频id列表
-func GetVideoIDListByUserID(ctx *gin.Context, userID int64, videoIDList *[]int) error {
+func GetVideoIDListByUserID(ctx *gin.Context, userID int64, videoIDList *[]int64) error {
 	var videoList []model.Video
 	result := global.DB.WithContext(ctx).Where("author_id = ?", userID).Find(&videoList)
 	if result.Error != nil {
@@ -73,7 +73,7 @@ func GetVideoIDListByUserID(ctx *gin.Context, userID int64, videoIDList *[]int) 
 		return nil
 	}
 	numVideos := int(result.RowsAffected)
-	*videoIDList = make([]int, numVideos)
+	*videoIDList = make([]int64, numVideos)
 	for i, videoID := range videoList {
 		// 最新的视频放在前面
 		(*videoIDList)[numVideos-i-1] = videoID.Id

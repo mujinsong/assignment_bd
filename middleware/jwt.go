@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"assignment_bd/global"
 	"assignment_bd/model"
 	"assignment_bd/service"
 	"context"
@@ -14,14 +15,12 @@ import (
 )
 
 var (
-	JwtMiddleware *jwt.HertzJWTMiddleware
-	IdentityKey   = "identity"
+	IdentityKey = "identity"
 )
 
 func MyJwt() {
 	var err error
-
-	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
+	global.HzJwtMw, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Key: []byte("tiktok jwt key"),
 		//Timeout:       time.Hour,
 		MaxRefresh:  time.Hour,

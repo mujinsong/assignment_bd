@@ -69,8 +69,8 @@ func MyJwt() {
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 
 			claims := jwt.ExtractClaims(ctx, c)
-			fmt.Println("claims:", claims)
-			fmt.Println("nothing else matter", int(claims[IdentityKey].(float64)))
+			//fmt.Println("claims:", claims)
+			//fmt.Println("nothing else matter", int(claims[IdentityKey].(float64)))
 			return &model.User{
 				Id: int64(int(claims[IdentityKey].(float64))),
 			}

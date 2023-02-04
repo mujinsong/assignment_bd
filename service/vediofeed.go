@@ -62,24 +62,18 @@ func GetVideoListByIDs(ctx *gin.Context, videoList *[]model.Video, videoIDs []in
 	return nil
 }
 
-// GetVideoIDListByUserID 得到用户发表过的视频id列表
-func GetVideoIDListByUserID(ctx *gin.Context, userID int64, videoIDList *[]int64) error {
-	var videoList []model.Video
-	result := global.DB.WithContext(ctx).Where("author_id = ?", userID).Find(&videoList)
+// GetVideoListByUserID 得到用户发表过的视频列表,返回视频数
+func GetVideoListByUserID(userID int64, videoList *[]model.Video) (int, error) {
+	result := global.DB.Where("user_id = ?", userID).Find(&videoList).Order("created_time DESC")
 	if result.Error != nil {
-		return result.Error
+		return 0, result.Error
 	}
 	if result.RowsAffected == 0 {
-		return nil
+		return 0, nil
 	}
 	numVideos := int(result.RowsAffected)
-	*videoIDList = make([]int64, numVideos)
-	for i, videoID := range videoList {
-		// 最新的视频放在前面
-		(*videoIDList)[numVideos-i-1] = videoID.Id
-	}
 
-	return nil
+	return numVideos, nil
 
 }
 

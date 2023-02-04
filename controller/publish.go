@@ -1,9 +1,13 @@
 package controller
 
 import (
+	"assignment_bd/middleware"
 	"assignment_bd/model"
+	"assignment_bd/service"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/hertz-contrib/jwt"
 	"log"
 	"net/http"
 	"strconv"
@@ -13,8 +17,9 @@ import (
 func Publish(ctx context.Context, c *app.RequestContext) {
 	// 鉴权 待补充
 	// 获取视频流 用户ID 视频标题
+	claims := jwt.ExtractClaims(ctx, c)
 	data, err := c.FormFile("data")
-	userId, _ := strconv.ParseInt(c.GetString("userId"), 10, 64)
+	userId := int64(claims[middleware.IdentityKey].(float64))
 	log.Printf("获取到用户id:%v\n", userId)
 	title := c.PostForm("title")
 	log.Printf("获取到视频title:%v\n", title)
@@ -48,7 +53,35 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 // PublishList 根据 user_id 查询用户 id，再查询这个用户发布的视频 （剩下逻辑注释本方法作者补写） 登录用户的视频发布列表，直接列出用户所有投稿过的视频。
 // TODO 这里的视频列表里的视频都是写死的，以后可以考虑用 oss 来存储，数据库里存储 URL
 func PublishList(ctx context.Context, c *app.RequestContext) {
-
+	//claims := jwt.ExtractClaims(ctx, c)
+	//当前用户ID
+	//userID := int64(claims[middleware.IdentityKey].(float64))
+	//查询的ID
+	queryIDStr := c.Query("user_id")
+	queryID, _ := strconv.Atoi(queryIDStr)
+	var videoList []model.Video
+	_, err := service.GetVideoListByUserID(int64(queryID), &videoList)
+	if err != nil {
+		return
+	}
+	user, err := service.UserInfoGetByUserID(queryIDStr)
+	if err != nil {
+		return
+	}
+	videoJOSN := make([]model.VideoInfo, len(videoList))
+	//todo
+	for i := 0; i < len(videoList); i++ {
+		videoJOSN[i].ID = videoList[i].Id
+		videoJOSN[i].CoverURL = videoList[i].CoverUrl
+		videoJOSN[i].Title = videoList[i].Title
+		videoJOSN[i].PlayURL = videoList[i].PlayUrl
+		videoJOSN[i].Author = *user
+	}
+	c.JSON(http.StatusOK, utils.H{
+		"status_code": 0,
+		"status_msg":  "OK",
+		"video_list":  videoJOSN,
+	})
 }
 
 //type VideoInfo struct {

@@ -56,3 +56,9 @@ func GetFollowStatusList(followerID uint, userIDList []uint, isfollowerList []bo
 	}
 	return nil
 }
+
+func FollowAndFollowedCount(userID int64) (followCount, followedCount int64, err error) {
+	global.DB.Select("COUNT(*)").Where("user_id = ? AND action_type = 1", userID).Take(&followedCount)
+	global.DB.Select("COUNT(*)").Where("follower = ? AND action_type = 1", userID).Take(&followCount)
+	return
+}

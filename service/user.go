@@ -83,7 +83,7 @@ func UserInfoGetByUserID(userID string) (user *model.UserInfo, err error) {
 	}
 
 	// 检查 userID 是否存在；若存在，获取用户信息
-	err = global.DB.Select("username").Where("id = ?", id).Limit(1).Find(&user.Name).Error
+	err = global.DB.Select("username").Where("id = ?", id).Limit(1).Find(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, gorm.ErrRecordNotFound
 	}

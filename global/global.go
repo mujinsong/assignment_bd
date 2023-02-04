@@ -9,3 +9,4 @@ var (
 	DB      *gorm.DB
 	HzJwtMw *jwt.HertzJWTMiddleware
 )
+

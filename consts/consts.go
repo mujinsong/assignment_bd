@@ -1,6 +1,8 @@
 package consts
 
 const (
+	STATUS_SUCCESS          = 0
+	STATUS_FAILURE          = 1
 	TOKEN_LENGTH            = 10
 	MIN_PASSWORD_PATTERN    = "^[_a-zA-Z0-9]{6,32}$"
 	MAX_USERNAME_LENGTH     = 30

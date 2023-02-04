@@ -1,76 +1,118 @@
 package middleware
 
 import (
-	"assignment_bd/consts"
-	"assignment_bd/global"
-	"assignment_bd/utils"
+	"assignment_bd/model"
+	"assignment_bd/service"
 	"context"
-
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	hutils "github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
-
-	"log"
 	"net/http"
 	"time"
 )
 
-// biz/router/middleware/jwt.go
+var (
+	JwtMiddleware *jwt.HertzJWTMiddleware
+	IdentityKey   = "identity"
+)
 
-// Claim 定义用户登陆信息结构体
-type Claim struct {
-	ID       int
-	Username string
-}
+func MyJwt() {
+	var err error
 
-var IdentityKey string = "id"
-
-func JwtMwInit() {
-	// the jwt middleware
-	authMiddleware, err := jwt.New(&jwt.HertzJWTMiddleware{
-		// 置所属领域名称
-		Realm: "hertz jwt",
-		// 用于设置签名密钥
-		Key: []byte(utils.RandStr(consts.TOKEN_LENGTH)),
-		// 设置 token 过期时间
-		Timeout: time.Hour * 8,
-		// 设置最大 token 刷新时间
-		MaxRefresh: time.Hour * 4,
-		// 设置 token 的获取源
-		TokenLookup: "query: token",
-		// 设置从 header 中获取 token 时的前缀
-		TokenHeadName: "",
-		// 用于设置检索身份的键
-		IdentityKey: IdentityKey,
-
-		// 从 token 提取用户信息
-		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
-			claims := jwt.ExtractClaims(ctx, c)
-			claim := claims[IdentityKey].(map[string]interface{})
-			return &Claim{
-				ID:       int(claim["ID"].(float64)),
-				Username: claim["Username"].(string),
-			}
+	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
+		Key: []byte("tiktok jwt key"),
+		//Timeout:       time.Hour,
+		MaxRefresh:  time.Hour,
+		TokenLookup: "query: token", //"header: Authorization", //  , cookie: jwt query: token ,
+		//TokenHeadName: "Bearer",
+		//Token 的返回
+		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+			c.JSON(http.StatusOK, utils.H{
+				"code":    code,
+				"token":   token,
+				"expire":  expire.Format(time.RFC3339),
+				"message": "success",
+			})
+			//c.JSON(http.StatusOK, backend.UserLoginResponse{
+			//	Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
+			//})
 		},
-
-		// 设置 jwt 校验流程发生错误时响应所包含的错误信息
+		//用户登陆（认证）
+		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
+			var loginStruct struct {
+				Username string `form:"username" json:"username" query:"username" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
+				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
+			}
+			fmt.Println("problem in this")
+			if err := c.BindAndValidate(&loginStruct); err != nil {
+				return nil, err
+			}
+			user, err := service.Login(&model.Login{Username: loginStruct.Username, Password: loginStruct.Password})
+			if err != nil {
+				return nil, err
+			}
+			fmt.Println("user:", user)
+			//c.JSON(http.StatusOK, backend.UserLoginResponse{
+			//	Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
+			//	UserID:   uint64(user.Id),
+			//	Token:
+			//})
+			return user, nil
+		},
 		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
-			hlog.CtxErrorf(ctx, "jwt biz err = %+v", e.Error())
+			hlog.CtxErrorf(ctx, "jwt err = %+v", e.Error())
 			return e.Error()
 		},
-		// 无权限
+		//用户信息的提取
+		IdentityKey: IdentityKey,
+		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
+
+			claims := jwt.ExtractClaims(ctx, c)
+			fmt.Println("claims:", claims)
+			fmt.Println("nothing else matter", int(claims[IdentityKey].(float64)))
+			return &model.User{
+				Id: int64(int(claims[IdentityKey].(float64))),
+			}
+		},
+		//通过授权者
+		//Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
+		//	//id, err := strconv.Atoi(c.Query("id"))
+		//	//if err != nil {
+		//	//	return false
+		//	//}
+		//	//if v, ok := data.(*model.User); ok && v.Id == uint(id) {
+		//	//	return true
+		//	//}
+		//	//return false
+		//	return true
+		//},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			c.JSON(http.StatusOK, hutils.H{
-				"code":   10011,
-				"detail": "无权限或用户认证已过期",
-				"data":   nil,
+			c.JSON(code, map[string]interface{}{
+				"code":    code,
+				"message": message,
 			})
+		},
+		//todo 把负载
+		PayloadFunc: func(data interface{}) jwt.MapClaims {
+			if v, ok := data.(*model.User); ok {
+				return jwt.MapClaims{
+					jwt.IdentityKey: v.Id,
+				}
+			}
+			return jwt.MapClaims{}
 		},
 	})
 	if err != nil {
-		log.Fatal("JWT Error:" + err.Error())
+		panic(err)
 	}
+}
 
-	global.HzJwtMw = authMiddleware
+// Ping .
+func Ping(ctx context.Context, c *app.RequestContext) {
+	user, _ := c.Get("username")
+	c.JSON(200, utils.H{
+		"message": fmt.Sprintf("id:%v", user.(*model.User).Id),
+	})
 }

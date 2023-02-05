@@ -7,7 +7,6 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
-	"github.com/hertz-contrib/jwt"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,9 +16,11 @@ import (
 func Publish(ctx context.Context, c *app.RequestContext) {
 	// 鉴权 待补充
 	// 获取视频流 用户ID 视频标题
-	claims := jwt.ExtractClaims(ctx, c)
+	//claims := jwt.ExtractClaims(ctx, c)
 	data, err := c.FormFile("data")
-	userId := int64(claims[middleware.IdentityKey].(float64))
+	//userId := int64(claims[middleware.IdentityKey].(float64))
+	user, _ := c.Get(middleware.IdentityKey)
+	userId := user.(model.User).Id
 	log.Printf("获取到用户id:%v\n", userId)
 	title := c.PostForm("title")
 	log.Printf("获取到视频title:%v\n", title)

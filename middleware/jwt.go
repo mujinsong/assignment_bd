@@ -24,7 +24,7 @@ func MyJwt() {
 		Key: []byte("tiktok jwt key"),
 		//Timeout:       time.Hour,
 		MaxRefresh:  time.Hour,
-		TokenLookup: "query: token", //"header: Authorization", //  , cookie: jwt query: token ,
+		TokenLookup: "query: token, form: token", //"header: Authorization", //  , cookie: jwt query: token ,
 		//TokenHeadName: "Bearer",
 		//Token 的返回
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
@@ -71,7 +71,7 @@ func MyJwt() {
 			claims := jwt.ExtractClaims(ctx, c)
 			//fmt.Println("claims:", claims)
 			//fmt.Println("nothing else matter", int(claims[IdentityKey].(float64)))
-			return &model.User{
+			return model.User{
 				Id: int64(int(claims[IdentityKey].(float64))),
 			}
 		},

@@ -75,7 +75,7 @@ func Login(in *model.Login) (user *model.User, err error) {
 	return
 }
 
-func UserInfoGetByUserID(userID string) (user *model.User, err error) {
+func UserInfoGetByUserID(userID string) (user *model.UserInfo, err error) {
 
 	id, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
@@ -83,11 +83,18 @@ func UserInfoGetByUserID(userID string) (user *model.User, err error) {
 	}
 
 	// 检查 userID 是否存在；若存在，获取用户信息
-	err = global.DB.Where("id = ?", id).Limit(1).Find(&user).Error
+	err = global.DB.Select("username").Where("id = ?", id).Limit(1).Find(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, gorm.ErrRecordNotFound
 	}
+	followCount, followerCount, err := FollowAndFollowedCount(id)
+	if err != nil {
+		return nil, err
+	}
+	user.ID = id
+	user.FollowCount = followCount
+	user.FollowerCount = followerCount
+	//todo
+
 	return user, nil
 }
-
-// todo

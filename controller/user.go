@@ -8,6 +8,7 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
+	"strconv"
 )
 
 // Register 用户注册账号（剩下逻辑注释本方法作者补写）
@@ -60,6 +61,10 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // todo 这里返回的 UserInfo 先写死了，因为我们其它例如获取用户关注数的功能还没写
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	// 获取指定用户的 ID，并请求用户详细信息 UserInfo
+	id, err := strconv.Atoi(c.Query("user_id"))
+	if err != nil {
+		return
+	}
 	userModel, err := service.UserInfoGetByUserID(c.Query("user_id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -67,23 +72,27 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 			StatusMsg:  "用户信息获取失败"})
 		return
 	}
-
+	followCount, followerCount, err := service.FollowAndFollowedCount(int64(id))
+	if err != nil {
+		return
+	}
 	//var users []model.UserInfo
 	//global.DB.Where("id = ?", 6).Find(&users)
 	//fmt.Println(users)
 
 	// 返回成功并生成响应 json
 	// 这里的数据写死了
+	//todo
 	c.JSON(http.StatusOK, model.UserInfoResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
 			StatusMsg:  "进入个人信息页面",
 		},
 		UserInfo: &model.UserInfo{
-			ID:            userModel.Id,
-			Name:          userModel.Username,
-			FollowCount:   0,
-			FollowerCount: 0,
+			ID:            userModel.ID,
+			Name:          userModel.Name,
+			FollowCount:   followCount,
+			FollowerCount: followerCount,
 			IsFollow:      false,
 		},
 	})

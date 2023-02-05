@@ -3,7 +3,6 @@ package main
 import (
 	"assignment_bd/controller"
 	"assignment_bd/global"
-	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -44,10 +43,4 @@ func initRouter(r *server.Hertz) {
 	//if err != nil {
 	//	return
 	//}
-}
-
-// 在需要鉴权的路由上引入
-func _taskMw() []app.HandlerFunc {
-	// your code...
-	return []app.HandlerFunc{global.HzJwtMw.MiddlewareFunc()}
 }

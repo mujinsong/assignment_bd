@@ -4,6 +4,7 @@ import (
 	"assignment_bd/consts"
 	"assignment_bd/model"
 	"assignment_bd/service"
+	"assignment_bd/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
@@ -14,6 +15,12 @@ import (
 func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 	videoIdq := c.Query("video_id")
 	actionTypeq := c.Query("action_type")
+
+	uid, err := utils.GetUid(c)
+	if err != nil {
+		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		return
+	}
 
 	if videoIdq == "" || actionTypeq == "" {
 		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: "参数错误"})
@@ -32,7 +39,7 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	if err := service.Like(videoId, int32(actionType)); err != nil {
+	if err := service.Like(uid, videoId, int32(actionType)); err != nil {
 		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}

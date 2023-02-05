@@ -53,7 +53,7 @@ func GetLikeCountListByVideoIDList(videoIDList []int, likeCountList *[]int) erro
 	return nil
 }
 
-func Like(videoId int64, actionType int32) error {
+func Like(uid int64, videoId int64, actionType int32) error {
 
 	// TODO 从token中获取用户ID
 	// 查询数据库是否已经存在数据

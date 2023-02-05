@@ -14,13 +14,13 @@ func initRouter(r *server.Hertz) {
 	//if err != nil {
 	//	return
 	//}
+	r.POST("/douyin/user/register/", controller.Register)      // 用户注册接口
 	r.POST("/douyin/user/login/", global.HzJwtMw.LoginHandler) // 用户登录接口
 	apiRouter := r.Group("/douyin", global.HzJwtMw.MiddlewareFunc())
 	{
 		// 基础接口
-		apiRouter.GET("/feed/", controller.Feed)               // 视频流接口
-		apiRouter.GET("/user/", controller.UserInfo)           // 用户信息
-		apiRouter.POST("/user/register/", controller.Register) // 用户注册接口
+		apiRouter.GET("/feed/", controller.Feed)     // 视频流接口
+		apiRouter.GET("/user/", controller.UserInfo) // 用户信息
 
 		apiRouter.POST("/publish/action/", controller.Publish)  // 视频投稿
 		apiRouter.GET("/publish/list/", controller.PublishList) // 视频发布列表

@@ -56,7 +56,7 @@ func RandStr(length int) string {
 
 // GetUid 从请求上下文中获取uid
 func GetUid(c *app.RequestContext) (uid int64, err error) {
-	value, exists := c.Get("identity")
+	value, exists := c.Get(consts.IdentityKey)
 	if !exists {
 		return 0, errors.New("获取value失败")
 	}

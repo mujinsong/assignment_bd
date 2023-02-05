@@ -1,12 +1,50 @@
 package controller
 
 import (
+	"assignment_bd/consts"
+	"assignment_bd/model"
+	"assignment_bd/service"
+	"assignment_bd/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
+	"net/http"
+	"strconv"
 )
 
 // FavoriteAction 对视频点赞和取消点赞的操作（剩下逻辑注释本方法作者补写）
 func FavoriteAction(ctx context.Context, c *app.RequestContext) {
+	videoIdq := c.Query("video_id")
+	actionTypeq := c.Query("action_type")
+
+	uid, err := utils.GetUid(c)
+	if err != nil {
+		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		return
+	}
+
+	if videoIdq == "" || actionTypeq == "" {
+		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: "参数错误"})
+		return
+	}
+
+	videoId, err := strconv.ParseInt(videoIdq, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		return
+	}
+
+	actionType, err := strconv.ParseInt(actionTypeq, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		return
+	}
+
+	if err := service.Like(uid, videoId, int32(actionType)); err != nil {
+		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_SUCCESS, StatusMsg: "成功"})
 
 }
 

@@ -2,7 +2,9 @@ package utils
 
 import (
 	"assignment_bd/consts"
+	"assignment_bd/model"
 	"errors"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"math/rand"
 	"regexp"
@@ -50,4 +52,18 @@ func RandStr(length int) string {
 		result = append(result, bytes[rand.Intn(len(bytes))])
 	}
 	return string(result)
+}
+
+// GetUid 从请求上下文中获取uid
+func GetUid(c *app.RequestContext) (uid int64, err error) {
+	value, exists := c.Get("identity")
+	if !exists {
+		return 0, errors.New("获取value失败")
+	}
+	user, ok := value.(*model.User)
+	if !ok {
+		return 0, errors.New("断言错误")
+	}
+	uid = user.Id
+	return
 }

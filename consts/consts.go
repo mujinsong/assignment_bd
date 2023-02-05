@@ -1,6 +1,7 @@
 package consts
 
 const (
+	IdentityKey             = "identity"
 	STATUS_SUCCESS          = 0
 	STATUS_FAILURE          = 1
 	TOKEN_LENGTH            = 10

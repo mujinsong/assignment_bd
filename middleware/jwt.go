@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"assignment_bd/consts"
 	"assignment_bd/global"
 	"assignment_bd/model"
 	"assignment_bd/service"
@@ -12,10 +13,6 @@ import (
 	"github.com/hertz-contrib/jwt"
 	"net/http"
 	"time"
-)
-
-var (
-	IdentityKey = "identity"
 )
 
 func MyJwt() {
@@ -65,14 +62,14 @@ func MyJwt() {
 			return e.Error()
 		},
 		//用户信息的提取
-		IdentityKey: IdentityKey,
+		IdentityKey: consts.IdentityKey,
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 
 			claims := jwt.ExtractClaims(ctx, c)
 			//fmt.Println("claims:", claims)
 			//fmt.Println("nothing else matter", int(claims[IdentityKey].(float64)))
 			return model.User{
-				Id: int64(int(claims[IdentityKey].(float64))),
+				Id: int64(int(claims[consts.IdentityKey].(float64))),
 			}
 		},
 		//通过授权者

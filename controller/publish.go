@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"assignment_bd/middleware"
+	"assignment_bd/consts"
 	"assignment_bd/model"
 	"assignment_bd/service"
 	"context"
@@ -19,7 +19,7 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 	//claims := jwt.ExtractClaims(ctx, c)
 	data, err := c.FormFile("data")
 	//userId := int64(claims[middleware.IdentityKey].(float64))
-	user, _ := c.Get(middleware.IdentityKey)
+	user, _ := c.Get(consts.IdentityKey)
 	userId := user.(model.User).Id
 	log.Printf("获取到用户id:%v\n", userId)
 	title := c.PostForm("title")

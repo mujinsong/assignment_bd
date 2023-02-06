@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -35,19 +36,19 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 	title := c.PostForm("title")
 	log.Printf("获取到视频title:%v\n", title)
 
-	localPath := "static/video/" + service.RandVideoName(data.Filename)
+	localPath := "static/video/" + utils2.RandVideoName(data.Filename)
 	video := model.Video{
 		Title:   title,
 		UserId:  userId,
-		PlayUrl: config.Server + config.Port + localPath,
+		PlayUrl: config.Server + config.Port + strings.Replace(localPath, "static", "", 1),
 	}
 	// 保存视频到本地
 	c.SaveUploadedFile(data, localPath)
 
-	// 异步执行 为了防止视频还没有上传完就生成封面
+	// 异步执行 为了防止视频还没有上传完就生成封面 如果5秒后还没有上传完成就会报错
 	time.AfterFunc(5*time.Second, func() {
 		// 生成视频封面
-		video.CoverUrl = utils2.GetSnapshot(localPath)
+		video.CoverUrl = config.Server + config.Port + strings.Replace(utils2.GetSnapshot(localPath), "static", "", 1)
 		// 保存视频信息到数据库
 		service.PublishVideo(&video)
 	})

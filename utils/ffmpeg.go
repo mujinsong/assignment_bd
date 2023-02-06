@@ -40,7 +40,7 @@ func GetSnapshot(videoPath string) string {
 	if err != nil {
 		println("failed to save image:", err)
 	}
-	return covername
+	return covername[2:]
 }
 
 /*

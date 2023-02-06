@@ -96,3 +96,14 @@ func GetVideoListByUserID(userID int64, videoList *[]model.Video) (int, error) {
 //	}
 //	return nil
 //}
+
+func FindVideos() []model.Video {
+	var videos []model.Video
+	global.DB.Limit(30).Find(&videos)
+	return videos
+}
+
+func FindVideoAuthor(authorid int64) (userinfo model.UserInfo) {
+	global.DB.Table("users").Where("id = ?", authorid).Find(&userinfo)
+	return userinfo
+}

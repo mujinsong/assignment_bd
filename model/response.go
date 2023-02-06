@@ -23,8 +23,8 @@ type Response struct {
 */
 type FeedResponse struct {
 	Response
-	NextTime  time.Time `json:"next_time,omitempty"`
-	VideoList []Video   `json:"video_list,omitempty"`
+	NextTime  time.Time   `json:"next_time,omitempty"`
+	VideoList []VideoInfo `json:"video_list,omitempty"`
 }
 
 // UserLoginResponse 用户 注册 或者 登录 响应的结构体

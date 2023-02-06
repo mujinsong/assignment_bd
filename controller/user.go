@@ -27,6 +27,8 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	tokenString := utils.RandStr(consts.TOKEN_LENGTH)
 
 	// 返回成功并生成响应 json
+	// 再次查询数据库 获取用户id
+	userModel, err = service.FindUser(username)
 	c.JSON(http.StatusOK, model.UserLoginResponse{
 		Response: model.Response{StatusCode: consts.STATUS_SUCCESS, StatusMsg: "已经注册成功"},
 		UserID:   userModel.Id,

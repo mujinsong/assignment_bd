@@ -51,6 +51,13 @@ func Register(username, password string) (out *model.User, err error) {
 
 	return
 }
+func FindUser(username string) (user *model.User, err error) {
+	err = global.DB.Where("username = ?", username).Take(&user).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New("未注册")
+	}
+	return
+}
 
 /*注册成功后将用户信息插入数据库*/
 func CreateNewUser(username, password string) {

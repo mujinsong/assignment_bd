@@ -4,14 +4,6 @@ import (
 	"assignment_bd/dao"
 )
 
-type User struct {
-	Id            uint   `json:"id,omitempty"`
-	Username      string `json:"username,omitempty"`
-	FollowCount   int64  `json:"follow_count"`
-	FollowerCount int64  `json:"follower_count"`
-	IsFollow      bool   `json:"is_follow"`
-}
-
 type Video struct {
 	Id            uint   `json:"id,omitempty"`
 	Author        User   `json:"author,omitempty"`

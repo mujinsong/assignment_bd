@@ -20,7 +20,7 @@ func MyJwt() {
 	global.HzJwtMw, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Key: []byte("tiktok jwt key"),
 		//Timeout:       time.Hour,
-		MaxRefresh:  time.Hour,
+		MaxRefresh:  time.Second * 5,
 		TokenLookup: "query: token, form: token", //"header: Authorization", //  , cookie: jwt query: token ,
 		//TokenHeadName: "Bearer",
 		//Token 的返回
@@ -31,9 +31,6 @@ func MyJwt() {
 				"expire":  expire.Format(time.RFC3339),
 				"message": "success",
 			})
-			//c.JSON(http.StatusOK, backend.UserLoginResponse{
-			//	Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
-			//})
 		},
 		//用户登陆（认证）
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {

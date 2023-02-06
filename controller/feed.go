@@ -5,21 +5,12 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
-//// Feed same demo video list for every request
-//func Feed(c *gin.Context) {
-//	var videolist []model.Video
-//	var ctx gin.Context
-//	var videoId []uint
-//	err := service.GetVideoListByIDs(&ctx, &videolist, videoId)
-//	if err != nil {
-//		fmt.Println(errors.New("获取视频列表失败"))
-//		return
-//	}
-//	c.JSON(http.StatusOK, backend.FeedResponse{
-//		Response:  backend.Response{StatusCode: 0},
-//		VideoList: videolist,
-//		NextTime:  time.Now().Unix(),
-//	})
+/*
+	项目本该部署到服务器上利用nginx提供视频流，这里为了方便测试，
+*/
+//func VideoStream(ctx context.Context, c *app.RequestContext){
+//	// 从请求中获取视频id
+//
 //}
 
 // Feed 视频流接口（给客户端推送短视频）（剩下逻辑注释本方法作者补写）

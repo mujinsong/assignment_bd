@@ -44,6 +44,8 @@ func Register(username, password string) (out *model.User, err error) {
 	result := global.DB.Where("username = ?", in.Username).Take(&out)
 	if result.RowsAffected != 0 {
 		return nil, errors.New("已有该用户名，请登录或换一个用户名注册")
+	} else {
+		println("没有该用户名")
 	}
 
 	//加密

@@ -3,6 +3,7 @@ package main
 import (
 	"assignment_bd/controller"
 	"assignment_bd/global"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

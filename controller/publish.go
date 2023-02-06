@@ -1,15 +1,18 @@
 package controller
 
 import (
+	"assignment_bd/config"
 	"assignment_bd/consts"
 	"assignment_bd/model"
 	"assignment_bd/service"
+	utils2 "assignment_bd/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // Publish 发布视频的操作 （剩下逻辑注释本方法作者补写） 登录用户选择视频上传。
@@ -18,12 +21,6 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 	// 获取视频流 用户ID 视频标题
 	//claims := jwt.ExtractClaims(ctx, c)
 	data, err := c.FormFile("data")
-	//userId := int64(claims[middleware.IdentityKey].(float64))
-	user, _ := c.Get(consts.IdentityKey)
-	userId := user.(model.User).Id
-	log.Printf("获取到用户id:%v\n", userId)
-	title := c.PostForm("title")
-	log.Printf("获取到视频title:%v\n", title)
 	if err != nil {
 		log.Printf("获取视频流失败:%v", err)
 		c.JSON(http.StatusOK, model.Response{
@@ -32,18 +29,28 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	videoInfo := GetVideo(title)
-	// 上传视频至数据库 并补充其余信息
-	err = videoInfo.Publish(data, userId, title)
-	if err != nil {
-		log.Printf("Publish(data, userId) 失败：%v", err)
-		c.JSON(http.StatusOK, model.Response{
-			StatusCode: 1,
-			StatusMsg:  err.Error(),
-		})
-		return
+	user, _ := c.Get(consts.IdentityKey)
+	userId := user.(model.User).Id
+	log.Printf("获取到用户id:%v\n", userId)
+	title := c.PostForm("title")
+	log.Printf("获取到视频title:%v\n", title)
+
+	localPath := "static/video/" + service.RandVideoName(data.Filename)
+	video := model.Video{
+		Title:   title,
+		UserId:  userId,
+		PlayUrl: config.Server + config.Port + localPath,
 	}
-	log.Printf("Publish(data, userId) 成功")
+	// 保存视频到本地
+	c.SaveUploadedFile(data, localPath)
+
+	// 异步执行 为了防止视频还没有上传完就生成封面
+	time.AfterFunc(5*time.Second, func() {
+		// 生成视频封面
+		video.CoverUrl = utils2.GetSnapshot(localPath)
+		// 保存视频信息到数据库
+		service.PublishVideo(&video)
+	})
 
 	c.JSON(http.StatusOK, model.Response{
 		StatusCode: 0,

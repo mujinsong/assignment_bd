@@ -7,6 +7,7 @@ import (
 	"assignment_bd/model"
 	"assignment_bd/utils"
 	"errors"
+	"github.com/DanPlayer/randomname"
 	"gorm.io/gorm"
 	"regexp"
 	"strconv"
@@ -45,25 +46,34 @@ func Register(username, password string) (out *model.User, err error) {
 	if result.RowsAffected != 0 {
 		return nil, errors.New("已有该用户名，请登录或换一个用户名注册")
 	} else {
-		println("没有该用户名")
+		CreateNewUser(in.Username, in.Password)
 	}
 
-	//加密
-	userSalt := utils.RandStr(10)
-	out.Password = utils.EncryptPassword(in.Password, userSalt)
-	out.Username = in.Username
-	out.Salt = userSalt
-
-	out.CreateAt = time.Now()
-
-	//插入数据库
-	err = global.DB.Create(out).Error
 	return
+}
+
+/*注册成功后将用户信息插入数据库*/
+func CreateNewUser(username, password string) {
+	NewUser := model.User{
+		Username: username,
+		Password: password,
+		Salt:     utils.RandStr(10),
+		CreateAt: time.Now(),
+		Name:     randomname.GenerateName(),
+		UserFollowCount: model.UserFollowCount{
+			FollowCount:   0,
+			FollowerCount: 0,
+		},
+	}
+	NewUser.Password = utils.EncryptPassword(NewUser.Password, NewUser.Salt)
+	//插入users数据库
+	global.DB.Create(&NewUser)
 }
 
 // Login 执行登录
 func Login(in *model.Login) (user *model.User, err error) {
 	//检测有没有这个用户名
+	println("username:", in.Username)
 	err = global.DB.Where("username = ?", in.Username).Take(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.New("未注册")
@@ -77,26 +87,28 @@ func Login(in *model.Login) (user *model.User, err error) {
 	return
 }
 
-func UserInfoGetByUserID(userID string) (user *model.UserInfo, err error) {
-
+func UserInfoGetByUserID(userID string) (userinfo *model.UserInfo, err error) {
 	id, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
 		return nil, errors.New("获取用户信息失败")
 	}
-
+	println("id:", id)
 	// 检查 userID 是否存在；若存在，获取用户信息
-	err = global.DB.Select("username").Where("id = ?", id).Limit(1).Find(&user).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return user, gorm.ErrRecordNotFound
-	}
-	followCount, followerCount, err := FollowAndFollowedCount(id)
-	if err != nil {
-		return nil, err
-	}
-	user.ID = id
-	user.FollowCount = followCount
-	user.FollowerCount = followerCount
-	//todo
 
-	return user, nil
+	user := model.User{}
+	err = global.DB.Table("users").Select("username").Where("id = ?", id).Limit(1).Find(&user).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return userinfo, gorm.ErrRecordNotFound
+	}
+	userinfo = &model.UserInfo{
+		ID:            user.Id,
+		Name:          user.Name,
+		FollowCount:   user.FollowCount,
+		FollowerCount: user.FollowerCount,
+		// TODO 判断是否关注该用户
+		IsFollow: false,
+	}
+	println("userinfo:", userinfo.ID, userinfo.Name, userinfo.FollowCount, userinfo.FollowerCount, userinfo.IsFollow)
+	return userinfo, nil
 }

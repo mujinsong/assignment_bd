@@ -2,6 +2,7 @@ package controller
 
 import (
 	"assignment_bd/consts"
+	"assignment_bd/global"
 	"assignment_bd/model"
 	"assignment_bd/service"
 	"assignment_bd/utils"
@@ -17,23 +18,18 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	password := c.Query("password")
 
 	// 注册用户到数据库（service 层的操作）
-	userModel, err := service.Register(username, password)
+	_, err := service.Register(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
 
-	// 生成对应 token
-	tokenString := utils.RandStr(consts.TOKEN_LENGTH)
-
-	// 返回成功并生成响应 json
-	// 再次查询数据库 获取用户id
-	userModel, err = service.FindUser(username)
-	c.JSON(http.StatusOK, model.UserLoginResponse{
-		Response: model.Response{StatusCode: consts.STATUS_SUCCESS, StatusMsg: "已经注册成功"},
-		UserID:   userModel.Id,
-		Token:    tokenString,
-	})
+	//c.JSON(http.StatusOK, model.UserLoginResponse{
+	//	Response: model.Response{StatusCode: consts.STATUS_SUCCESS, StatusMsg: "已经注册成功"},
+	//	UserID:   userModel.Id,
+	//	Token:    tokenString,
+	//})
+	global.HzJwtMw.LoginHandler(ctx, c)
 }
 
 // Login 用户登录（剩下逻辑注释本方法作者补写）

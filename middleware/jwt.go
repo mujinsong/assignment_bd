@@ -25,15 +25,22 @@ func MyJwt() {
 		//TokenHeadName: "Bearer",
 		//Token 的返回
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+			//可选（登录返回uid）
+			//parseToken, err := global.HzJwtMw.ParseTokenString(token)
+			//if err != nil {
+			//	return
+			//}
+			//claim := jwt.ExtractClaimsFromToken(parseToken)
+			//id := claim[consts.IdentityKey]
+
 			c.JSON(http.StatusOK, utils.H{
 				"code":    code,
 				"token":   token,
 				"expire":  expire.Format(time.RFC3339),
 				"message": "success",
+				//可选（登录返回uid）
+				//"user_id": id,
 			})
-			//c.JSON(http.StatusOK, backend.UserLoginResponse{
-			//	Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
-			//})
 		},
 		//用户登陆（认证）
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {

@@ -63,25 +63,32 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // todo 这里返回的 UserInfo 先写死了，因为我们其它例如获取用户关注数的功能还没写
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	// 获取指定用户的 ID，并请求用户详细信息 UserInfo
-	id, err := strconv.Atoi(c.Query("user_id"))
-	if err != nil {
+	usermodel, isok := c.Get(consts.IdentityKey)
+	if isok == false {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			StatusCode: consts.STATUS_FAILURE,
+			StatusMsg:  "用户信息获取失败"})
 		return
 	}
-	userModel, err := service.UserInfoGetByUserID(c.Query("user_id"))
+	uid := usermodel.(model.User).Id
+	//fmt.Println("tokenID:", uid)
+	strID := c.Query("user_id")
+	userModel, err := service.UserInfoGetByUserID(strID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
 			StatusCode: consts.STATUS_FAILURE,
 			StatusMsg:  "用户信息获取失败"})
 		return
 	}
+	id, err := strconv.Atoi(strID)
+	if err != nil {
+		return
+	}
 	followCount, followerCount, err := service.FollowAndFollowedCount(int64(id))
 	if err != nil {
 		return
 	}
-	//var users []model.UserInfo
-	//global.DB.Where("id = ?", 6).Find(&users)
-	//fmt.Println(users)
-
+	isFollow := service.IsFollow(uid, int64(id))
 	// 返回成功并生成响应 json
 	// 这里的数据写死了
 	//todo
@@ -95,7 +102,7 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 			Name:          userModel.Name,
 			FollowCount:   followCount,
 			FollowerCount: followerCount,
-			IsFollow:      false,
+			IsFollow:      isFollow,
 		},
 	})
 }

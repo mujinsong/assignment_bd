@@ -31,3 +31,7 @@ type FriendUser struct {
 func (u User) TableName() string {
 	return "users"
 }
+
+//func (u UserInfo) TableName() string {
+//	return "users"
+//}

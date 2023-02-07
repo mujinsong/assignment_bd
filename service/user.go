@@ -7,6 +7,7 @@ import (
 	"assignment_bd/model"
 	"assignment_bd/utils"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"regexp"
 	"strconv"
@@ -75,15 +76,17 @@ func Login(in *model.Login) (user *model.User, err error) {
 	return
 }
 
+// UserInfoGetByUserID 通过ID获取用户信息
 func UserInfoGetByUserID(userID string) (user *model.UserInfo, err error) {
-
+	user = new(model.UserInfo)
+	//fmt.Println(userID)
 	id, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {
 		return nil, errors.New("获取用户信息失败")
 	}
-
+	var username string
 	// 检查 userID 是否存在；若存在，获取用户信息
-	err = global.DB.Select("username").Where("id = ?", id).Limit(1).Find(&user).Error
+	err = global.DB.Select("username").Model(model.User{}).Where("id = ?", id).Limit(1).Take(&username).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, gorm.ErrRecordNotFound
 	}
@@ -91,6 +94,7 @@ func UserInfoGetByUserID(userID string) (user *model.UserInfo, err error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(followCount, followerCount)
 	user.ID = id
 	user.FollowCount = followCount
 	user.FollowerCount = followerCount

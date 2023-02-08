@@ -3,6 +3,7 @@ package service
 import (
 	"assignment_bd/global"
 	"assignment_bd/model"
+	"errors"
 )
 
 func GetUserLikeListByVideoIDList(userId int, videoIDList []int, likeList *[]bool) error {
@@ -53,7 +54,7 @@ func GetLikeCountListByVideoIDList(videoIDList []int, likeCountList *[]int) erro
 	return nil
 }
 
-func Like(uid int64, videoId int64, actionType int32) error {
+func Like(uid int64, videoID int64, actionType int32) error {
 
 	// TODO 从token中获取用户ID
 	// 查询数据库是否已经存在数据
@@ -61,6 +62,29 @@ func Like(uid int64, videoId int64, actionType int32) error {
 	//                   不是：更新
 	// 没有：是不是点赞，是：插入数据
 	//                不是：不操作
-
+	likeID := 0
+	result := global.DB.Model(model.VideoLike{}).Select("id").Where("user_id = ? AND video_id = ?", uid, videoID).Take(likeID)
+	if result.RowsAffected == 0 {
+		likeModel := model.VideoLike{
+			VideoId:    int(videoID),
+			UserId:     int(uid),
+			ActionType: int8(actionType % 2),
+		}
+		res := global.DB.Create(&likeModel)
+		if res.RowsAffected == 0 {
+			return errors.New("创建第一次模型失败，点赞失败")
+		}
+		return nil
+	}
+	likeModel := model.VideoLike{}
+	res := global.DB.Take(&likeModel)
+	if res.RowsAffected == 0 {
+		return errors.New("获取点赞状态失败")
+	}
+	likeModel.ActionType = int8(actionType % 2)
+	res = global.DB.Save(&likeModel)
+	if res.RowsAffected == 0 {
+		return errors.New("更改状态失败")
+	}
 	return nil
 }

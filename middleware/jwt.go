@@ -20,7 +20,7 @@ func MyJwt() {
 	global.HzJwtMw, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Key: []byte("tiktok jwt key"),
 		//Timeout:       time.Hour,
-		MaxRefresh:  time.Hour,
+		MaxRefresh:  time.Hour * 24 * 7,
 		TokenLookup: "query: token, form: token", //"header: Authorization", //  , cookie: jwt query: token ,
 		//TokenHeadName: "Bearer",
 		//Token 的返回

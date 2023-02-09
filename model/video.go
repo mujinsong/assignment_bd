@@ -9,12 +9,14 @@ import (
 
 // Video 对应的是数据库中的 video 结构，用来存储
 type Video struct {
-	Id        int64     `json:"id,omitempty"`
-	UserId    int64     `json:"user_id,omitempty"`
-	Title     string    `json:"title,omitempty"`
-	PlayUrl   string    `json:"play_url,omitempty"`
-	CoverUrl  string    `json:"cover_url,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	Id            int64     `json:"id,omitempty"`
+	UserId        int64     `json:"user_id,omitempty"`
+	Title         string    `json:"title,omitempty"`
+	PlayUrl       string    `json:"play_url,omitempty"`
+	CoverUrl      string    `json:"cover_url,omitempty"`
+	CreatedAt     time.Time `json:"created_at,omitempty"`
+	FavoriteCount int64     `json:"favorite_count"`
+	CommentCount  int64     `json:"comment_count"`
 }
 
 // VideoInfo 视频信息，基本包含了视频的所有信息，不能直接通过数据库获取，需要各个字段拼装获取

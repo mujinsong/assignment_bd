@@ -7,6 +7,7 @@ import (
 	"assignment_bd/model"
 	"assignment_bd/utils"
 	"errors"
+	"github.com/DanPlayer/randomname"
 	"gorm.io/gorm"
 	"regexp"
 	"strconv"
@@ -44,19 +45,36 @@ func Register(username, password string) (out *model.User, err error) {
 	result := global.DB.Where("username = ?", in.Username).Take(&out)
 	if result.RowsAffected != 0 {
 		return nil, errors.New("已有该用户名，请登录或换一个用户名注册")
+	} else {
+		CreateNewUser(in.Username, in.Password)
 	}
 
-	//加密
-	userSalt := utils.RandStr(10)
-	out.Password = utils.EncryptPassword(in.Password, userSalt)
-	out.Username = in.Username
-	out.Salt = userSalt
-
-	out.CreateAt = time.Now()
-
-	//插入数据库
-	err = global.DB.Create(out).Error
 	return
+}
+func FindUser(username string) (user *model.User, err error) {
+	err = global.DB.Where("username = ?", username).Take(&user).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New("未注册")
+	}
+	return
+}
+
+/*注册成功后将用户信息插入数据库*/
+func CreateNewUser(username, password string) {
+	NewUser := model.User{
+		Username: username,
+		Password: password,
+		Salt:     utils.RandStr(10),
+		CreateAt: time.Now(),
+		Name:     randomname.GenerateName(),
+		UserFollowCount: model.UserFollowCount{
+			FollowCount:   0,
+			FollowerCount: 0,
+		},
+	}
+	NewUser.Password = utils.EncryptPassword(NewUser.Password, NewUser.Salt)
+	//插入users数据库
+	global.DB.Create(&NewUser)
 }
 
 // Login 执行登录

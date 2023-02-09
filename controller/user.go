@@ -60,7 +60,6 @@ func Login(ctx context.Context, c *app.RequestContext) {
 }
 
 // UserInfo 获取用户信息（剩下逻辑注释本方法作者补写）
-// todo 这里返回的 UserInfo 先写死了，因为我们其它例如获取用户关注数的功能还没写
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	// 获取指定用户的 ID，并请求用户详细信息 UserInfo
 	usermodel, isok := c.Get(consts.IdentityKey)

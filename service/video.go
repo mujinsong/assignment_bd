@@ -74,10 +74,13 @@ func GetVideoListByUserID(userID int64, videoList *[]model.Video) (int, error) {
 //	return nil
 //}
 
-// PublishVideo 将用户上传的视频信息写入数据库(new)
-func PublishVideo(ctx *gin.Context, video model.Video) error {
-	if global.DB.WithContext(ctx).Create(&video).Error != nil {
-		return errors.New("video表插入失败")
-	}
-	return nil
+func FindVideos() []model.Video {
+	var videos []model.Video
+	global.DB.Limit(30).Find(&videos)
+	return videos
+}
+
+func FindVideoAuthor(authorid int64) (userinfo model.UserInfo) {
+	global.DB.Table("users").Where("id = ?", authorid).Find(&userinfo)
+	return userinfo
 }

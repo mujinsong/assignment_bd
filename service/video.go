@@ -4,7 +4,6 @@ import (
 	"assignment_bd/global"
 	"assignment_bd/model"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"time"
 )
 
@@ -19,7 +18,7 @@ func GetFeedVideosAndAuthors(videoList *[]model.Video, users *[]model.User, Late
 	numVideos := len(*videoList)
 
 	// 批量或者视频作者
-	userIDList := make([]int64, numVideos)
+	userIDList := make([]uint64, numVideos)
 	for i, video := range *videoList {
 		userIDList[i] = video.UserId
 	}
@@ -40,7 +39,7 @@ func GetVideoListByIDs(videoIDs *[]uint64) (*[]model.Video, error) {
 }
 
 // GetVideoListByUserID 得到用户发表过的视频列表,返回视频数
-func GetVideoListByUserID(userID int64, videoList *[]model.Video) (int, error) {
+func GetVideoListByUserID(userID uint64, videoList *[]model.Video) (int, error) {
 	result := global.DB.Where("user_id = ?", userID).Find(&videoList).Order("created_time DESC")
 	if result.Error != nil {
 		return 0, result.Error
@@ -55,16 +54,16 @@ func GetVideoListByUserID(userID int64, videoList *[]model.Video) (int, error) {
 }
 
 // PublishVideo 将用户上传的视频信息写入数据库(old)
-//func PublishVideo(ctx *gin.Context,userID int64, videoID int64, videoName string, coverName string, title string) error {
+//func PublishVideo(ctx *gin.Context,userID uint64, videoID uint64, videoName string, coverName string, title string) error {
 //	video := model.Video{
-//		Id:       videoID,
+//		ID:       videoID,
 //		Title:    title,
 //		PlayUrl:  videoName,
 //		CoverUrl: coverName,
 //		//FavoriteCount : 0,
 //		//CommentCount : 0,
 //		Author: model.User{
-//			Id: int(userID),
+//			ID: int(userID),
 //		},
 //		CreatedAt: time.Now(),
 //	}
@@ -80,7 +79,7 @@ func FindVideos() []model.Video {
 	return videos
 }
 
-func FindVideoAuthor(authorid int64) (userinfo model.UserInfo) {
+func FindVideoAuthor(authorid uint64) (userinfo model.UserInfo) {
 	global.DB.Table("users").Where("id = ?", authorid).Find(&userinfo)
 	return userinfo
 }

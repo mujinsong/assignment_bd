@@ -3,8 +3,8 @@ package config
 var (
 	// DSN 数据库地址
 	UseDSN = KM911LocalDSN
-	// Server 服务器地址 或者本机地址(需要端口号) 用于生成视频流url
-	Server = "http://192.168.1.5"
+	// Server 服务器地址 或者本机地址 用于生成视频的播放地址
+	Server = "http://192.168.1.4"
 	// 监听端口
 	Port = ":8888"
 

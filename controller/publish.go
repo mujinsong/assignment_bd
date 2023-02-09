@@ -31,7 +31,7 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	user, _ := c.Get(consts.IdentityKey)
-	userId := user.(model.User).Id
+	userId := user.(model.User).ID
 	log.Printf("获取到用户id:%v\n", userId)
 	title := c.PostForm("title")
 	log.Printf("获取到视频title:%v\n", title)
@@ -64,12 +64,12 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 func PublishList(ctx context.Context, c *app.RequestContext) {
 	//claims := jwt.ExtractClaims(ctx, c)
 	//当前用户ID
-	//userID := int64(claims[middleware.IdentityKey].(float64))
+	//userID := uint64(claims[middleware.IdentityKey].(float64))
 	//查询的ID
 	queryIDStr := c.Query("user_id")
 	queryID, _ := strconv.Atoi(queryIDStr)
 	var videoList []model.Video
-	_, err := service.GetVideoListByUserID(int64(queryID), &videoList)
+	_, err := service.GetVideoListByUserID(uint64(queryID), &videoList)
 	if err != nil {
 		return
 	}
@@ -80,10 +80,10 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 	videoJOSN := make([]model.VideoInfo, len(videoList))
 	//todo
 	for i := 0; i < len(videoList); i++ {
-		videoJOSN[i].ID = videoList[i].Id
-		videoJOSN[i].CoverURL = videoList[i].CoverUrl
+		videoJOSN[i].ID = videoList[i].ID
+		videoJOSN[i].CoverUrl = videoList[i].CoverUrl
 		videoJOSN[i].Title = videoList[i].Title
-		videoJOSN[i].PlayURL = videoList[i].PlayUrl
+		videoJOSN[i].PlayUrl = videoList[i].PlayUrl
 		videoJOSN[i].Author = *user
 	}
 	c.JSON(http.StatusOK, utils.H{
@@ -94,12 +94,12 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 }
 
 //type VideoInfo struct {
-//	ID            int64    `json:"id"`             // 视频唯一标识
+//	ID            uint64    `json:"id"`             // 视频唯一标识
 //	Author        UserInfo `json:"author"`         // 视频作者信息
-//	PlayURL       string   `json:"play_url"`       // 视频播放地址
-//	CoverURL      string   `json:"cover_url"`      // 视频封面地址
-//	FavoriteCount int64    `json:"favorite_count"` // 视频的点赞总数
-//	CommentCount  int64    `json:"comment_count"`  // 视频的评论总数
+//	PlayUrl       string   `json:"play_url"`       // 视频播放地址
+//	CoverUrl      string   `json:"cover_url"`      // 视频封面地址
+//	FavoriteCount uint64    `json:"favorite_count"` // 视频的点赞总数
+//	CommentCount  uint64    `json:"comment_count"`  // 视频的评论总数
 //	IsFavorite    bool     `json:"is_favorite"`    // true-已点赞，false-未点赞
 //	Title         string   `json:"title"`          // 视频标题
 //}

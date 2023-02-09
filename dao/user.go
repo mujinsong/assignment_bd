@@ -3,7 +3,7 @@ package dao
 import "time"
 
 type User struct {
-	Id       uint      `json:"id,omitempty"`
+	ID       uint      `json:"id,omitempty"`
 	Username string    `json:"username,omitempty"`
 	Password string    `json:"password,omitempty"`
 	Salt     string    `json:"salt,omitempty"`

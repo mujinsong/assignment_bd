@@ -5,9 +5,10 @@ import (
 	"assignment_bd/model"
 	"assignment_bd/service"
 	"context"
-	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
 	"strconv"
+
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 // Deprecated: Like 点赞操作，见favorite.go
@@ -19,7 +20,7 @@ func Like(ctx context.Context, c *app.RequestContext) {
 			StatusMsg:  "操作失败"})
 		return
 	}
-	uid := payload.(model.User).Id
+	uid := payload.(model.User).ID
 	//fmt.Println(uid)
 	videoIDStr := c.Query("video_id")
 	videoID, err := strconv.Atoi(videoIDStr)
@@ -33,7 +34,8 @@ func Like(ctx context.Context, c *app.RequestContext) {
 	} else {
 		actionType = 2
 	}
-	err = service.Like(uid, int64(videoID), int32(actionType))
+
+	err = service.Like(uid, uint64(videoID), int32(actionType))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
 			StatusCode: consts.STATUS_FAILURE,
@@ -43,7 +45,6 @@ func Like(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusInternalServerError, model.Response{
 		StatusCode: consts.STATUS_SUCCESS,
 		StatusMsg:  "Success"})
-
 }
 
 // Deprecated: LikeList 点赞列表，见favorite.go

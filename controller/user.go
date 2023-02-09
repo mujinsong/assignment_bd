@@ -5,11 +5,10 @@ import (
 	"assignment_bd/global"
 	"assignment_bd/model"
 	"assignment_bd/service"
-	"assignment_bd/utils"
 	"context"
-	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
-	"strconv"
+
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 // Register 用户注册账号（剩下逻辑注释本方法作者补写）
@@ -18,90 +17,45 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	password := c.Query("password")
 
 	// 注册用户到数据库（service 层的操作）
+	println("注册操作")
 	_, err := service.Register(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
-
-	// 生成对应 token
-	//tokenString := utils.RandStr(consts.TOKEN_LENGTH)
-
-	// 返回成功并生成响应 json
-	//c.JSON(http.StatusOK, model.UserLoginResponse{
-	//	Response: model.Response{StatusCode: consts.STATUS_SUCCESS, StatusMsg: "已经注册成功"},
-	//	UserID:   userModel.Id,
-	//	Token:    tokenString,
-	//})
 	global.HzJwtMw.LoginHandler(ctx, c)
 }
 
-// Login 用户登录（剩下逻辑注释本方法作者补写）
+// Login 用户登录
 func Login(ctx context.Context, c *app.RequestContext) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	// 从数据库查询用户信息
-	userModel, err := service.Login(&model.Login{Username: username, Password: password})
+	_, err := service.Login(&model.Login{Username: username, Password: password})
 	if err != nil {
-		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: "用户名或密码错误"})
+		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
 
-	// 生成对应 token
-	tokenString := utils.RandStr(consts.TOKEN_LENGTH)
-
-	// 返回成功并生成响应 json
-	c.JSON(http.StatusOK, model.UserLoginResponse{
-		Response: model.Response{StatusCode: consts.STATUS_SUCCESS, StatusMsg: "登录成功"},
-		UserID:   userModel.Id,
-		Token:    tokenString,
-	})
+	global.HzJwtMw.LoginHandler(ctx, c)
 }
 
 // UserInfo 获取用户信息（剩下逻辑注释本方法作者补写）
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	// 获取指定用户的 ID，并请求用户详细信息 UserInfo
-	usermodel, isok := c.Get(consts.IdentityKey)
-	if isok == false {
-		c.JSON(http.StatusInternalServerError, model.Response{
-			StatusCode: consts.STATUS_FAILURE,
-			StatusMsg:  "用户信息获取失败"})
-		return
-	}
-	uid := usermodel.(model.User).Id
-	//fmt.Println("tokenID:", uid)
 	strID := c.Query("user_id")
-	userModel, err := service.UserInfoGetByUserID(strID)
+	userInfo, err := service.UserInfoGetByUserID(strID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
 			StatusCode: consts.STATUS_FAILURE,
 			StatusMsg:  "用户信息获取失败"})
 		return
 	}
-	id, err := strconv.Atoi(strID)
-	if err != nil {
-		return
-	}
-	followCount, followerCount, err := service.FollowAndFollowedCount(int64(id))
-	if err != nil {
-		return
-	}
-	isFollow := service.IsFollow(uid, int64(id))
-	// 返回成功并生成响应 json
-	// 这里的数据写死了
-	//todo
 	c.JSON(http.StatusOK, model.UserInfoResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
 			StatusMsg:  "进入个人信息页面",
 		},
-		UserInfo: &model.UserInfo{
-			ID:            userModel.ID,
-			Name:          userModel.Name,
-			FollowCount:   followCount,
-			FollowerCount: followerCount,
-			IsFollow:      isFollow,
-		},
+		UserInfo: userInfo,
 	})
 }

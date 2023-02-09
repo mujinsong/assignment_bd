@@ -7,12 +7,13 @@ import (
 	"assignment_bd/service"
 	"context"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
-	"net/http"
-	"time"
 )
 
 func MyJwt() {
@@ -46,7 +47,6 @@ func MyJwt() {
 				Username string `form:"username" json:"username" query:"username" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 			}
-			fmt.Println("problem in this")
 			if err := c.BindAndValidate(&loginStruct); err != nil {
 				return nil, err
 			}
@@ -57,7 +57,7 @@ func MyJwt() {
 			fmt.Println("user:", user)
 			//c.JSON(http.StatusOK, backend.UserLoginResponse{
 			//	Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
-			//	UserID:   uint64(user.Id),
+			//	UserID:   uint64(user.ID),
 			//	Token:
 			//})
 			return user, nil
@@ -74,7 +74,7 @@ func MyJwt() {
 			//fmt.Println("claims:", claims)
 			//fmt.Println("nothing else matter", int(claims[IdentityKey].(float64)))
 			return model.User{
-				Id: int64(int(claims[consts.IdentityKey].(float64))),
+				ID: uint64(int(claims[consts.IdentityKey].(float64))),
 			}
 		},
 		//通过授权者
@@ -83,7 +83,7 @@ func MyJwt() {
 		//	//if err != nil {
 		//	//	return false
 		//	//}
-		//	//if v, ok := data.(*model.User); ok && v.Id == uint(id) {
+		//	//if v, ok := data.(*model.User); ok && v.ID == uint(id) {
 		//	//	return true
 		//	//}
 		//	//return false
@@ -99,7 +99,7 @@ func MyJwt() {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*model.User); ok {
 				return jwt.MapClaims{
-					jwt.IdentityKey: v.Id,
+					jwt.IdentityKey: v.ID,
 				}
 			}
 			return jwt.MapClaims{}
@@ -114,6 +114,6 @@ func MyJwt() {
 func Ping(ctx context.Context, c *app.RequestContext) {
 	user, _ := c.Get("username")
 	c.JSON(200, utils.H{
-		"message": fmt.Sprintf("id:%v", user.(*model.User).Id),
+		"message": fmt.Sprintf("id:%v", user.(*model.User).ID),
 	})
 }

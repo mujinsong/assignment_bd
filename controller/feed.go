@@ -5,9 +5,10 @@ import (
 	"assignment_bd/model"
 	"assignment_bd/service"
 	"context"
-	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
 	"time"
+
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 /*
@@ -19,27 +20,26 @@ import (
 func Feed(ctx context.Context, c *app.RequestContext) {
 	// 查询数据库中的视频信息
 	lasttime := c.Query("latest_time")
+	println(lasttime)
 	user, _ := c.Get(consts.IdentityKey)
-	userId := user.(model.User).Id
-	println("userId:", userId)
-	println("lasttime:", lasttime)
+	userId := user.(model.User).ID
 	var feedResponse model.FeedResponse
 	feedResponse.Response.StatusCode = consts.STATUS_SUCCESS
 	feedResponse.Response.StatusMsg = "获取视频列表成功"
-	feedResponse.NextTime = time.Now()
+	feedResponse.NextTime = uint64(time.Now().Unix())
 
 	videolist := service.FindVideos()
 	// 通过视频列表中的userId获取用户信息
 	for _, video := range videolist {
 		feedResponse.VideoList = append(feedResponse.VideoList,
 			model.VideoInfo{
-				ID:            video.Id,
+				ID:            video.ID,
 				Author:        service.FindVideoAuthor(video.UserId),
-				PlayURL:       video.PlayUrl,
-				CoverURL:      video.CoverUrl,
+				PlayUrl:       video.PlayUrl,
+				CoverUrl:      video.CoverUrl,
 				FavoriteCount: video.FavoriteCount,
 				CommentCount:  video.CommentCount,
-				IsFavorite:    service.IsFavorite(userId, video.Id),
+				IsFavorite:    service.IsFavorite(userId, video.ID),
 				Title:         video.Title,
 			},
 		)

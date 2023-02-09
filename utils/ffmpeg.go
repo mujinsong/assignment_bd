@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/disintegration/imaging"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 
@@ -34,8 +35,6 @@ func GetSnapshot(videoPath string) string {
 		Run()
 	coverdata, err := imaging.Decode(buf)
 	covername := "./" + GetVideoName(videoPath)
-	println("视频路径为:", videoPath)
-	println("视频封面图片路径:", covername)
 	err = imaging.Save(coverdata, covername)
 	if err != nil {
 		println("failed to save image:", err)

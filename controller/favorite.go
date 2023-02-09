@@ -1,13 +1,14 @@
 package controller
 
 import (
-	"assignment_bd/api/backend"
 	"assignment_bd/consts"
 	"assignment_bd/model"
 	"assignment_bd/service"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+
+	//"github.com/cloudwego/hertz/pkg/common/utils"
 	"net/http"
 	"strconv"
 )
@@ -21,7 +22,7 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 			StatusMsg:  "操作失败"})
 		return
 	}
-	uid := payload.(model.User).Id
+	uid := payload.(model.User).ID
 	//fmt.Println(uid)
 	videoIDStr := c.Query("video_id")
 	videoID, err := strconv.Atoi(videoIDStr)
@@ -35,25 +36,26 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 	} else {
 		actionType = 2
 	}
-	err = service.Like(uid, int64(videoID), int32(actionType))
+
+	err = service.Like(uid, uint64(videoID), int32(actionType))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
 			StatusCode: consts.STATUS_FAILURE,
 			StatusMsg:  "操作失败"})
 		return
 	}
-	c.JSON(http.StatusInternalServerError, model.Response{
+	c.JSON(http.StatusOK, model.Response{
 		StatusCode: consts.STATUS_SUCCESS,
 		StatusMsg:  "Success"})
 }
 
+// func FavoriteList (
 // FavoriteList 从数据库中查询当前用户，并查询当前用户点赞过的视频（剩下逻辑注释本方法作者补写）
-// TODO 这里的视频列表里的视频也都是写死的，以后可以考虑用 oss 来存储，数据库里存储 URL
 func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	strID := c.Query("user_id")
 	id, _ := strconv.Atoi(strID)
 	claims, _ := c.Get(consts.IdentityKey)
-	masterID := claims.(model.User).Id
+	masterID := claims.(model.User).ID
 	videoIDList, err := service.GetLikeVideoIDListByUserID(uint64(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -79,8 +81,8 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	}
 	//fmt.Println("len:", len(*videoList))
 	length := len(*videoIDList)
-	response := make([]backend.Video, length)
-	likeCountList := make([]int, length)
+	response := make([]model.VideoInfo, length)
+	likeCountList := make([]uint64, length)
 	commentCountList := make([]uint64, length)
 	err = service.GetLikeCountListByVideoIDList(*videoIDList, &likeCountList)
 	if err != nil {
@@ -94,60 +96,18 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	for i := 0; i < length; i++ {
-		response[i].Id = uint((*videoList)[i].Id)
+		response[i].ID = (*videoList)[i].ID
 		response[i].PlayUrl = (*videoList)[i].PlayUrl
 		response[i].Title = (*videoList)[i].Title
 		response[i].CoverUrl = (*videoList)[i].CoverUrl
-		userInfo := model.UserInfo{}
-		err := service.GetUserInfoByUserID((*videoList)[i].UserId, &userInfo)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, model.Response{
-				StatusCode: consts.STATUS_FAILURE,
-				StatusMsg:  "操作失败"})
-			return
-		}
-		response[i].Author.Username = userInfo.Name
-		response[i].Author.Id = uint(userInfo.ID)
-		response[i].Author.IsFollow = service.IsFollow(userInfo.ID, masterID)
-		response[i].Author.FollowerCount = userInfo.FollowerCount
-		response[i].Author.FollowCount = userInfo.FollowCount
-		response[i].FavoriteCount = uint(likeCountList[i])
-		response[i].CommentCount = uint(commentCountList[i])
-
+		response[i].Author = service.FindVideoAuthor((*videoList)[i].UserId)
+		response[i].FavoriteCount = likeCountList[i]
+		response[i].CommentCount = commentCountList[i]
+		response[i].IsFavorite = service.IsFavorite(masterID, (*videoList)[i].ID)
 	}
 	c.JSON(http.StatusOK, utils.H{
 		"status_code": consts.STATUS_SUCCESS,
 		"status_msg":  "Success",
 		"video_list":  response,
 	})
-	//var user User
-
-	//
-	//result := config.DB.First(&user, id)
-	//if result.Error != nil {
-	//	fmt.Println(result.Error)        // 返回 error
-	//	fmt.Println(result.RowsAffected) // 返回插入记录的条数
-	//}
-	//
-	//c.JSON(http.StatusOK, VideoListResponse{
-	//	StatusCode: 1,
-	//	StatusMsg:  nil,
-	//	VideoList: []Video{
-	//		{
-	//			ID: 1,
-	//			Author: UserInfo{
-	//				FollowCount:   0,
-	//				FollowerCount: 0,
-	//				ID:            user.ID,
-	//				IsFollow:      false,
-	//				Name:          user.Username,
-	//			},
-	//			PlayURL:       "https://www.w3schools.com/html/movie.mp4",
-	//			CoverURL:      "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg",
-	//			FavoriteCount: 0,
-	//			CommentCount:  0,
-	//			IsFavorite:    false,
-	//		},
-	//	},
-	//})
 }

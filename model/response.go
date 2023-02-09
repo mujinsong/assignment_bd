@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 // 取代了 backend 包，将封装的所有的数据结构都放在这里
 // 并指明了各个响应对应的接口
 
@@ -23,7 +21,7 @@ type Response struct {
 */
 type FeedResponse struct {
 	Response
-	NextTime  time.Time   `json:"next_time,omitempty"`
+	NextTime  uint64      `json:"next_time,omitempty"`
 	VideoList []VideoInfo `json:"video_list,omitempty"`
 }
 
@@ -34,7 +32,7 @@ type FeedResponse struct {
 */
 type UserLoginResponse struct {
 	Response
-	UserID int64  `json:"user_id"`
+	UserID uint64 `json:"user_id"`
 	Token  string `json:"token"`
 }
 

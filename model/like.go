@@ -1,10 +1,10 @@
 package model
 
 type VideoLike struct {
-	Id         int  `json:"id"`
-	UserId     int  `json:"user_id"`
-	VideoId    int  `json:"video_id"`
-	ActionType int8 `json:"action_type"`
+	ID         uint64 `json:"id"`
+	UserId     uint64 `json:"user_id"`
+	VideoId    uint64 `json:"video_id"`
+	ActionType uint8  `json:"action_type"`
 }
 
 func (v VideoLike) TableName() string {
@@ -12,6 +12,6 @@ func (v VideoLike) TableName() string {
 }
 
 type VideoLikeCount struct {
-	VideoId   int `json:"video_id"`
-	LikeCount int `json:"like_count"`
+	VideoId   uint64 `json:"video_id"`
+	LikeCount uint64 `json:"like_count"`
 }

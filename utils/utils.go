@@ -4,12 +4,13 @@ import (
 	"assignment_bd/consts"
 	"assignment_bd/model"
 	"errors"
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/gogf/gf/v2/crypto/gmd5"
 	"math/rand"
 	"regexp"
 	"time"
 	"unicode/utf8"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 )
 
 func VerifyUsernamePassword(username, password string) (bool, error) {
@@ -55,7 +56,7 @@ func RandStr(length int) string {
 }
 
 // GetUid 从请求上下文中获取uid
-func GetUid(c *app.RequestContext) (uid int64, err error) {
+func GetUid(c *app.RequestContext) (uid uint64, err error) {
 	value, exists := c.Get(consts.IdentityKey)
 	if !exists {
 		return 0, errors.New("获取value失败")
@@ -64,6 +65,6 @@ func GetUid(c *app.RequestContext) (uid int64, err error) {
 	if !ok {
 		return 0, errors.New("断言错误")
 	}
-	uid = user.Id
+	uid = user.ID
 	return
 }

@@ -17,7 +17,7 @@ func GetUserLikeListByVideoIDList(userId int, videoIDList []int, likeList *[]boo
 	numVideos := result.RowsAffected
 	*likeList = make([]bool, 0, numVideos)
 
-	mapVideoIDToLikeCount := make(map[int]int, numVideos)
+	mapVideoIDToLikeCount := make(map[uint64]uint64, numVideos)
 	for _, each := range uniqueVideoList {
 		mapVideoIDToLikeCount[each.VideoId] = each.LikeCount
 	}
@@ -35,7 +35,7 @@ func GetUserLikeListByVideoIDList(userId int, videoIDList []int, likeList *[]boo
 }
 
 // GetLikeCountListByVideoIDList 获得Like数通过视频ID(群)
-func GetLikeCountListByVideoIDList(videoIDList []uint64, likeCountList *[]int) error {
+func GetLikeCountListByVideoIDList(videoIDList []uint64, likeCountList *[]uint64) error {
 	var uniqueVideoList []model.VideoLikeCount
 	result := global.DB.Model(&model.VideoLike{}).Select("video_id", "COUNT(video_id) as like_count").
 		Where("video_id in ?", videoIDList).Group("video_id").Find(&uniqueVideoList)
@@ -43,49 +43,79 @@ func GetLikeCountListByVideoIDList(videoIDList []uint64, likeCountList *[]int) e
 		return result.Error
 	}
 	numVideos := result.RowsAffected
-	*likeCountList = make([]int, 0, numVideos)
-	mapVideoIDToLikeCount := make(map[int]int, numVideos)
+	*likeCountList = make([]uint64, 0, numVideos)
+	mapVideoIDToLikeCount := make(map[uint64]uint64, numVideos)
 	for _, each := range uniqueVideoList {
 		mapVideoIDToLikeCount[each.VideoId] = each.LikeCount
 	}
 	for _, videoID := range videoIDList {
-		*likeCountList = append(*likeCountList, mapVideoIDToLikeCount[int(videoID)])
+		*likeCountList = append(*likeCountList, mapVideoIDToLikeCount[videoID])
 	}
 	return nil
 }
 
 // Like 点赞视频操作
-func Like(uid int64, videoID int64, actionType int32) error {
-
+func Like(uid uint64, videoID uint64, actionType int32) error {
+	println("对视频点赞")
 	// TODO 从token中获取用户ID
 	// 查询数据库是否已经存在数据
 	// 有： 更新 是否相同：是：不操作
 	//                   不是：更新
 	// 没有：是不是点赞，是：插入数据
 	//                不是：不操作
-	likeID := 0
-	result := global.DB.Model(model.VideoLike{}).Select("id").Where("user_id = ? AND video_id = ?", uid, videoID).Take(likeID)
-	if result.RowsAffected == 0 {
-		likeModel := model.VideoLike{
-			VideoId:    int(videoID),
-			UserId:     int(uid),
-			ActionType: int8(actionType % 2),
+
+	var likeLog model.VideoLike
+	global.DB.Table("likes").Where("user_id = ? AND video_id = ?", uid, videoID).Take(&likeLog)
+	if likeLog.ID == 0 {
+		// 不存在记录
+		if actionType == 1 {
+			// 点赞
+			likeLog = model.VideoLike{
+				UserId:     uid,
+				VideoId:    videoID,
+				ActionType: 1,
+			}
+			global.DB.Create(&likeLog)
 		}
-		res := global.DB.Create(&likeModel)
-		if res.RowsAffected == 0 {
-			return errors.New("创建第一次模型失败，点赞失败")
+	} else {
+		// 存在记录
+		// 此时actionType==2 说明用户是点赞然后取消点赞
+		if actionType == 2 {
+			// 取消点赞 将记录中的actionType改为2即可
+			likeLog.ActionType = 2
+			global.DB.Save(&likeLog)
+		} else {
+			// 这个时候是用户取消点赞然后又点赞
+			likeLog.ActionType = 1
+			global.DB.Save(&likeLog)
 		}
-		return nil
 	}
-	likeModel := model.VideoLike{}
-	res := global.DB.Take(&likeModel)
-	if res.RowsAffected == 0 {
-		return errors.New("获取点赞状态失败")
+	// 更新视频的点赞数
+	err := UpdateVideoLikes(videoID, actionType)
+	if err != nil {
+		return err
 	}
-	likeModel.ActionType = int8(actionType % 2)
-	res = global.DB.Save(&likeModel)
+	return nil
+}
+
+/*
+更新videos表中的点赞数
+*/
+func UpdateVideoLikes(videoID uint64, actionType int32) error {
+	var favoriteCount uint64
+	res := global.DB.Table("videos").Select("favorite_count").Where("id = ?", videoID).Take(&favoriteCount)
+	println("视频点赞数：", favoriteCount)
 	if res.RowsAffected == 0 {
-		return errors.New("更改状态失败")
+		return errors.New("获取视频点赞数失败")
+	}
+	if actionType == 1 {
+		favoriteCount++
+	} else {
+		favoriteCount--
+	}
+	res = global.DB.Table("videos").Where("id = ?", videoID).Update("favorite_count", favoriteCount)
+	if res.RowsAffected == 0 {
+		return errors.New("更新视频点赞数失败")
 	}
 	return nil
 }

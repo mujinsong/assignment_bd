@@ -9,30 +9,30 @@ import (
 
 // Video 对应的是数据库中的 video 结构，用来存储
 type Video struct {
-	Id            int64     `json:"id,omitempty"`
-	UserId        int64     `json:"user_id,omitempty"`
+	ID            uint64    `json:"id,omitempty"`
+	UserId        uint64    `json:"user_id,omitempty"`
 	Title         string    `json:"title,omitempty"`
 	PlayUrl       string    `json:"play_url,omitempty"`
 	CoverUrl      string    `json:"cover_url,omitempty"`
 	CreatedAt     time.Time `json:"created_at,omitempty"`
-	FavoriteCount int64     `json:"favorite_count"`
-	CommentCount  int64     `json:"comment_count"`
+	FavoriteCount uint64    `json:"favorite_count"`
+	CommentCount  uint64    `json:"comment_count"`
 }
 
 // VideoInfo 视频信息，基本包含了视频的所有信息，不能直接通过数据库获取，需要各个字段拼装获取
 type VideoInfo struct {
-	ID            int64    `json:"id"`             // 视频唯一标识
+	ID            uint64   `json:"id"`             // 视频唯一标识
 	Author        UserInfo `json:"author"`         // 视频作者信息
-	PlayURL       string   `json:"play_url"`       // 视频播放地址
-	CoverURL      string   `json:"cover_url"`      // 视频封面地址
-	FavoriteCount int64    `json:"favorite_count"` // 视频的点赞总数
-	CommentCount  int64    `json:"comment_count"`  // 视频的评论总数
+	PlayUrl       string   `json:"play_url"`       // 视频播放地址
+	CoverUrl      string   `json:"cover_url"`      // 视频封面地址
+	FavoriteCount uint64   `json:"favorite_count"` // 视频的点赞总数
+	CommentCount  uint64   `json:"comment_count"`  // 视频的评论总数
 	IsFavorite    bool     `json:"is_favorite"`    // true-已点赞，false-未点赞
 	Title         string   `json:"title"`          // 视频标题
 }
 
 // Publish 上传视频至数据库
-func (i VideoInfo) Publish(data *multipart.FileHeader, userId int64, title string) error {
+func (i VideoInfo) Publish(data *multipart.FileHeader, userId uint64, title string) error {
 	// 视频播放地址
 	file, err := data.Open()
 	if err != nil {
@@ -89,7 +89,7 @@ func VideoFTP(file multipart.File, name string) error {
 }
 
 // Save 补充组装 待补充
-func Save(videoName string, imageName string, userId int64, title string) error {
+func Save(videoName string, imageName string, userId uint64, title string) error {
 	return nil
 }
 

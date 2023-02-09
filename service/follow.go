@@ -48,18 +48,23 @@ func GetFollowStatusList(followerID uint, userIDList []uint, isfollowerList []bo
 }
 
 // FollowAndFollowedCount 获取userID的所有关注和被关注人数
-func FollowAndFollowedCount(userID int64) (followCount, followedCount int64, err error) {
+func FollowAndFollowedCount(userID uint64) (followCount, followedCount uint64, err error) {
 	global.DB.Select("COUNT(*)").Where("user_id = ? AND action_type = 1", userID).Model(model.Follow{}).Take(&followedCount)
 	global.DB.Select("COUNT(*)").Where("follower_id = ? AND action_type = 1", userID).Model(model.Follow{}).Take(&followCount)
 	return
 }
 
 // IsFollow 判断两者followerID是否关注masterID
-func IsFollow(masterID, followerID int64) bool {
-	var Type int8
-	global.DB.Model(model.Follow{}).Select("action_type").Where("user_id = ? AND follower_id = ?", masterID, followerID).Take(&Type)
-	if Type == 1 {
-		return true
-	}
+// func IsFollow(masterID, followerID uint64) bool {
+// 	var Type int8
+// 	global.DB.Model(model.Follow{}).Select("action_type").Where("user_id = ? AND follower_id = ?", masterID, followerID).Take(&Type)
+// 	if Type == 1 {
+// 		return true
+// 	}
+// 	return false
+// }
+
+func IsFollow(masterID, followerID uint64) bool {
+	println(masterID, followerID)
 	return false
 }

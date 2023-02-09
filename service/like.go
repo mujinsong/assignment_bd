@@ -35,7 +35,7 @@ func GetUserLikeListByVideoIDList(userId int, videoIDList []int, likeList *[]boo
 }
 
 // GetLikeCountListByVideoIDList 获得Like数通过视频ID(群)
-func GetLikeCountListByVideoIDList(videoIDList []int, likeCountList *[]int) error {
+func GetLikeCountListByVideoIDList(videoIDList []uint64, likeCountList *[]int) error {
 	var uniqueVideoList []model.VideoLikeCount
 	result := global.DB.Model(&model.VideoLike{}).Select("video_id", "COUNT(video_id) as like_count").
 		Where("video_id in ?", videoIDList).Group("video_id").Find(&uniqueVideoList)
@@ -49,11 +49,12 @@ func GetLikeCountListByVideoIDList(videoIDList []int, likeCountList *[]int) erro
 		mapVideoIDToLikeCount[each.VideoId] = each.LikeCount
 	}
 	for _, videoID := range videoIDList {
-		*likeCountList = append(*likeCountList, mapVideoIDToLikeCount[videoID])
+		*likeCountList = append(*likeCountList, mapVideoIDToLikeCount[int(videoID)])
 	}
 	return nil
 }
 
+// Like 点赞视频操作
 func Like(uid int64, videoID int64, actionType int32) error {
 
 	// TODO 从token中获取用户ID
@@ -87,4 +88,14 @@ func Like(uid int64, videoID int64, actionType int32) error {
 		return errors.New("更改状态失败")
 	}
 	return nil
+}
+
+// GetLikeVideoIDListByUserID 获取用户喜欢的列表
+func GetLikeVideoIDListByUserID(uid uint64) (*[]uint64, error) {
+	var videoList []uint64
+	res := global.DB.Select("video_id").Where("user_id = ? AND action_type = 1", uid).Model(model.VideoLike{}).Find(&videoList)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return &videoList, nil
 }

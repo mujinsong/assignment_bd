@@ -30,36 +30,13 @@ func GetFeedVideosAndAuthors(videoList *[]model.Video, users *[]model.User, Late
 	return numVideos, nil
 }
 
-func GetVideoListByIDs(ctx *gin.Context, videoList *[]model.Video, videoIDs []int) error {
-	//var uniqueVideoList []model.Video
-	//result := global.DB.Where("video_id in ?", videoIDs).Find(&uniqueVideoList)
-	//if result.Error != nil {
-	//	return result.Error
-	//}
-	//numVideos := result.RowsAffected
-	//*videoList = make([]model.Video, 0, numVideos)
-	//mapVideoIDToVideo := make(map[int]model.Video, numVideos)
-	//for _, video := range uniqueVideoList {
-	//	mapVideoIDToVideo[video.Id] = video
-	//}
-	//// 查询like_count与comment_count
-	//var commentCountList []int
-	//var likeCountList []int
-	//if err := GetCommentCountListByVideoIDList(ctx, videoIDs, &commentCountList); err != nil {
-	//	return err
-	//}
-	////todo
-	//err := GetLikeCountListByVideoIDList(videoIDs, &likeCountList)
-	//if err != nil {
-	//	return err
-	//}
-	//for i, videoID := range videoIDs {
-	//	tmpVideo := mapVideoIDToVideo[videoID]
-	//	tmpVideo.FavoriteCount = likeCountList[i]
-	//	tmpVideo.FavoriteCount = commentCountList[i]
-	//	*videoList = append(*videoList, tmpVideo)
-	//}
-	return nil
+func GetVideoListByIDs(videoIDs *[]uint64) (*[]model.Video, error) {
+	var uniqueVideoList []model.Video
+	result := global.DB.Where("id in ?", *videoIDs).Find(&uniqueVideoList).Order("id DESC")
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &uniqueVideoList, nil
 }
 
 // GetVideoListByUserID 得到用户发表过的视频列表,返回视频数

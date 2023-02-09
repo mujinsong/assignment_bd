@@ -93,8 +93,8 @@ func Save(videoName string, imageName string, userId int64, title string) error 
 
 // VideoCommentCount 评论数
 type VideoCommentCount struct {
-	VideoId int
-	Count   int
+	VideoId uint64 `json:"video_id"`
+	Count   uint64 `json:"count"`
 }
 
 func (receiver Video) TableName() string {

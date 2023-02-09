@@ -10,6 +10,7 @@ import (
 	"strconv"
 )
 
+// Deprecated: Like 点赞操作，见favorite.go
 func Like(ctx context.Context, c *app.RequestContext) {
 	payload, exist := c.Get(consts.IdentityKey)
 	if !exist {
@@ -45,5 +46,6 @@ func Like(ctx context.Context, c *app.RequestContext) {
 
 }
 
+// Deprecated: LikeList 点赞列表，见favorite.go
 func LikeList(ctx context.Context, c *app.RequestContext) {
 }

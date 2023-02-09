@@ -1,49 +1,19 @@
 package controller
 
 import (
+	"assignment_bd/api/backend"
 	"assignment_bd/consts"
 	"assignment_bd/model"
 	"assignment_bd/service"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	"net/http"
 	"strconv"
 )
 
 // FavoriteAction 对视频点赞和取消点赞的操作
 func FavoriteAction(ctx context.Context, c *app.RequestContext) {
-	//videoIdq := c.Query("video_id")
-	//actionTypeq := c.Query("action_type")
-	//
-	//uid, err := utils.GetUid(c)
-	//if err != nil {
-	//	c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
-	//	return
-	//}
-	//
-	//if videoIdq == "" || actionTypeq == "" {
-	//	c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: "参数错误"})
-	//	return
-	//}
-	//
-	//videoId, err := strconv.ParseInt(videoIdq, 10, 64)
-	//if err != nil {
-	//	c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
-	//	return
-	//}
-	//
-	//actionType, err := strconv.ParseInt(actionTypeq, 10, 32)
-	//if err != nil {
-	//	c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
-	//	return
-	//}
-	//
-	//if err := service.Like(uid, videoId, int32(actionType)); err != nil {
-	//	c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
-	//	return
-	//}
-	//
-	//c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_SUCCESS, StatusMsg: "成功"})
 	payload, exist := c.Get(consts.IdentityKey)
 	if !exist {
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -80,8 +50,78 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 // FavoriteList 从数据库中查询当前用户，并查询当前用户点赞过的视频（剩下逻辑注释本方法作者补写）
 // TODO 这里的视频列表里的视频也都是写死的，以后可以考虑用 oss 来存储，数据库里存储 URL
 func FavoriteList(ctx context.Context, c *app.RequestContext) {
+	strID := c.Query("user_id")
+	id, _ := strconv.Atoi(strID)
+	claims, _ := c.Get(consts.IdentityKey)
+	masterID := claims.(model.User).Id
+	videoIDList, err := service.GetLikeVideoIDListByUserID(uint64(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			StatusCode: consts.STATUS_FAILURE,
+			StatusMsg:  "操作失败"})
+		return
+	}
+	//fmt.Println("len:", len(*videoIDList))
+	if len(*videoIDList) == 0 {
+		c.JSON(http.StatusOK, utils.H{
+			"status_code": consts.STATUS_SUCCESS,
+			"status_msg":  "Success",
+			"video_list":  nil,
+		})
+		return
+	}
+	videoList, err := service.GetVideoListByIDs(videoIDList)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			StatusCode: consts.STATUS_FAILURE,
+			StatusMsg:  "操作失败"})
+		return
+	}
+	//fmt.Println("len:", len(*videoList))
+	length := len(*videoIDList)
+	response := make([]backend.Video, length)
+	likeCountList := make([]int, length)
+	commentCountList := make([]uint64, length)
+	err = service.GetLikeCountListByVideoIDList(*videoIDList, &likeCountList)
+	if err != nil {
+		return
+	}
+	err = service.GetCommentCountListByVideoIDList(*videoIDList, &commentCountList)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			StatusCode: consts.STATUS_FAILURE,
+			StatusMsg:  "操作失败"})
+		return
+	}
+	for i := 0; i < length; i++ {
+		response[i].Id = uint((*videoList)[i].Id)
+		response[i].PlayUrl = (*videoList)[i].PlayUrl
+		response[i].Title = (*videoList)[i].Title
+		response[i].CoverUrl = (*videoList)[i].CoverUrl
+		userInfo := model.UserInfo{}
+		err := service.GetUserInfoByUserID((*videoList)[i].UserId, &userInfo)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, model.Response{
+				StatusCode: consts.STATUS_FAILURE,
+				StatusMsg:  "操作失败"})
+			return
+		}
+		response[i].Author.Username = userInfo.Name
+		response[i].Author.Id = uint(userInfo.ID)
+		response[i].Author.IsFollow = service.IsFollow(userInfo.ID, masterID)
+		response[i].Author.FollowerCount = userInfo.FollowerCount
+		response[i].Author.FollowCount = userInfo.FollowCount
+		response[i].FavoriteCount = uint(likeCountList[i])
+		response[i].CommentCount = uint(commentCountList[i])
+
+	}
+	c.JSON(http.StatusOK, utils.H{
+		"status_code": consts.STATUS_SUCCESS,
+		"status_msg":  "Success",
+		"video_list":  response,
+	})
 	//var user User
-	//id := c.Query("user_id")
+
 	//
 	//result := config.DB.First(&user, id)
 	//if result.Error != nil {

@@ -7,7 +7,6 @@ import (
 	"assignment_bd/model"
 	"assignment_bd/utils"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 	"regexp"
 	"strconv"
@@ -84,21 +83,26 @@ func UserInfoGetByUserID(userID string) (user *model.UserInfo, err error) {
 	if err != nil {
 		return nil, errors.New("获取用户信息失败")
 	}
+	err = GetUserInfoByUserID(id, user)
+	//todo
+	return user, nil
+}
+
+// GetUserInfoByUserID 通过用户ID获取用户信息，为了不影响兼容性，所以没在原函数上改，另起一个，由原函数调用它
+func GetUserInfoByUserID(id int64, user *model.UserInfo) (err error) {
 	var username string
 	// 检查 userID 是否存在；若存在，获取用户信息
 	err = global.DB.Select("username").Model(model.User{}).Where("id = ?", id).Limit(1).Take(&username).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return user, gorm.ErrRecordNotFound
+		return gorm.ErrRecordNotFound
 	}
 	followCount, followerCount, err := FollowAndFollowedCount(id)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	fmt.Println(followCount, followerCount)
+	//fmt.Println(followCount, followerCount)
 	user.ID = id
 	user.FollowCount = followCount
 	user.FollowerCount = followerCount
-	//todo
-
-	return user, nil
+	return
 }

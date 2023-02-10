@@ -107,7 +107,7 @@ func GetFollowList(userID uint64) ([]model.UserInfo, error) {
 
 		userInfo := model.UserInfo{
 			ID:   user.ID,
-			Name: user.Username,
+			Name: user.Name,
 			//FollowCount:   233,
 			//FollowerCount: 233,
 			IsFollow: true,
@@ -144,7 +144,7 @@ func GetFollowerList(userID uint64) ([]model.UserInfo, error) {
 
 		userInfo := model.UserInfo{
 			ID:   user.ID,
-			Name: user.Username,
+			Name: user.Name,
 			//FollowCount:   233,
 			//FollowerCount: 233,
 			IsFollow: checkFollow.ID != 0,
@@ -154,6 +154,57 @@ func GetFollowerList(userID uint64) ([]model.UserInfo, error) {
 	}
 
 	return users, err
+}
+
+// GetFriendList 可获取可聊天朋友列表，并且会带着和该用户的最新的一条消息。
+func GetFriendList(userID uint64) ([]model.FriendUser, error) {
+	var err error
+	var friends []model.FriendUser
+	var follows []model.Follow
+
+	// 先从 follows 表中查找出当前用户的所有粉丝
+	err = global.DB.Where("user_id = ?", userID).Where("action_type = ?", 1).Find(&follows).Error
+	friends = make([]model.FriendUser, len(follows))
+
+	for i, follow := range follows {
+		var user model.User
+		var friend model.FriendUser
+		var message model.Message
+		msgType := 0 // message消息的类型，0 => 当前请求用户接收的消息， 1 => 当前请求用户发送的消息（默认为0）
+
+		err = global.DB.Where("id = ?", follow.FollowerID).Find(&user).Error
+
+		// 按时间排序找到第一条信息
+		// SELECT * FROM messages WHERE (from_user_id = 'userID' AND to_user_id = 'follow.FollowerID')
+		// OR (from_user_id = 'follow.FollowerID' AND to_user_id = 'userID') ORDER created_at ASC LIMIT 1
+		err = global.DB.
+			Where("from_user_id = ? AND to_user_id = ?", userID, follow.FollowerID).
+			Or("from_user_id = ? AND to_user_id = ?", follow.FollowerID, userID).
+			Order("create_at ASC").Limit(1).Find(&message).Error
+
+		// 如果是当前请求用户发送的消息，msgType 改成 1
+		if message.FromUserID == userID {
+			msgType = 1
+		}
+
+		// 生成每一个 friend
+		friend = model.FriendUser{
+			UserInfo: model.UserInfo{
+				ID:   user.ID,
+				Name: user.Name,
+				//FollowCount:   0,
+				//FollowerCount: 0,
+				//IsFollow:      false,
+			},
+			// order按时间排序的第一条消息
+			Message: message.Content,
+			MsgType: msgType,
+		}
+
+		friends[i] = friend
+	}
+
+	return friends, err
 }
 
 /*

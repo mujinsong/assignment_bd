@@ -57,6 +57,7 @@ func FollowList(ctx context.Context, c *app.RequestContext) {
 	statusCode := consts.STATUS_SUCCESS
 	var statusMsg string
 	userID := utils.StrToUint64(c.Query("user_id"))
+
 	users, err := service.GetFollowList(userID) // 获取用户关注列表 service 层
 
 	if err != nil {
@@ -80,6 +81,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 	statusCode := consts.STATUS_SUCCESS
 	var statusMsg string
 	userID := utils.StrToUint64(c.Query("user_id"))
+
 	users, err := service.GetFollowerList(userID) // 获取用户关注列表 service 层
 
 	if err != nil {
@@ -97,6 +99,26 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 	})
 }
 
-// FriendList 获取用户好友列表（剩下逻辑注释本方法作者补写）
+// FriendList 获取用户好友列表（和粉丝列表差不多，但是返回的数据类型不同）
 func FriendList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	statusCode := consts.STATUS_SUCCESS
+	var statusMsg string
+	userID := utils.StrToUint64(c.Query("user_id"))
+
+	friends, err := service.GetFriendList(userID) // 获取用户关注列表 service 层
+
+	if err != nil {
+		statusCode = consts.STATUS_FAILURE
+		statusMsg = "获取失败"
+		fmt.Println(err)
+	}
+
+	c.JSON(http.StatusOK, model.FriendListResponse{
+		Response: model.Response{
+			StatusCode: statusCode,
+			StatusMsg:  statusMsg,
+		},
+		FriendList: friends,
+	})
 }

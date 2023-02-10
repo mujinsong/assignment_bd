@@ -26,7 +26,7 @@ CREATE TABLE `comments`  (
   `user_id` int(0) NOT NULL COMMENT '评论者id',
   `video_id` int(0) NOT NULL COMMENT '视频id',
   `action_type` int(0) NOT NULL COMMENT '评论的状态（存在1，删除0）',
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '评论内容',
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE  utf8mb4_general_ci NOT NULL COMMENT '评论内容',
   `create_date` datetime(0) NOT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
@@ -95,13 +95,12 @@ CREATE TABLE `users`  (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `username` varchar(32) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL COMMENT '用户名',
   `password` varchar(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '密码',
-  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户的昵称',
+  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE  utf8mb4_general_ci NOT NULL COMMENT '用户的昵称',
   `salt` varchar(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '加密盐-生成密码用',
   `create_at` datetime(0) NOT NULL COMMENT '创建时间',
   `follow_count` int unsigned NOT NULL COMMENT '用户的关注数',
   `follower_count` int unsigned NOT NULL COMMENT '用户的粉丝数',
   PRIMARY KEY (`id`) USING BTREE
-  INDEX `username`(`username`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
@@ -122,7 +121,7 @@ CREATE TABLE `videos`  (
   `user_id` int(0) NOT NULL COMMENT '作者id',
   `play_url` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '播放地址',
   `cover_url` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '封面地址',
-  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '视频标题',
+  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE  utf8mb4_general_ci NOT NULL COMMENT '视频标题',
   `created_at` datetime(0) NOT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   `favorite_count` int unsigned NOT NULL COMMENT '喜欢数目',
   `comment_count` int unsigned NOT NULL COMMENT '评论数目',

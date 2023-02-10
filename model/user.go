@@ -15,6 +15,7 @@ type User struct {
 type UserFollowCount struct {
 	FollowCount   uint64 `json:"follow_count,omitempty"`
 	FollowerCount uint64 `json:"follower_count,omitempty"`
+	//IsFollow uint64 `json:"is_follow"`
 }
 
 // UserInfo 是这个用户所有的信息（视频作者信息）

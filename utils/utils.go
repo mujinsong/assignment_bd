@@ -64,7 +64,7 @@ func GetUid(c *app.RequestContext) (uid uint64, err error) {
 	if !exists {
 		return 0, errors.New("获取value失败")
 	}
-	user, ok := value.(*model.User)
+	user, ok := value.(model.User)
 	if !ok {
 		return 0, errors.New("断言错误")
 	}

@@ -20,7 +20,7 @@ func GetFeedVideosAndAuthors(videoList *[]model.Video, users *[]model.User, Late
 	// 批量或者视频作者
 	userIDList := make([]uint64, numVideos)
 	for i, video := range *videoList {
-		userIDList[i] = video.UserId
+		userIDList[i] = video.UserID
 	}
 	result = global.DB.Model(&model.User{}).Where("user_id IN ?", userIDList).Find(users)
 	if result.RowsAffected == 0 {
@@ -79,7 +79,28 @@ func FindVideos() []model.Video {
 	return videos
 }
 
-func FindVideoAuthor(authorid uint64) (userinfo model.UserInfo) {
-	global.DB.Table("users").Where("id = ?", authorid).Find(&userinfo)
-	return userinfo
+//func FindUser(authorid uint64) (userinfo model.UserInfo) {
+//	global.DB.Table("users").Where("id = ?", authorid).Find(&userinfo)
+//	return userinfo
+//}
+
+/*
+根据actionType的值来判断是增加还是减少视频的评论数
+*/
+func UpdateVideoCommentCount(videoID uint64, actionType uint8) error {
+	var CommentCount uint64
+	result := global.DB.Table("videos").Select("comment_count").Where("id = ?", videoID).Find(&CommentCount)
+	if result.Error != nil {
+		return result.Error
+	}
+	if actionType == 1 {
+		CommentCount++
+	} else {
+		CommentCount--
+	}
+	result = global.DB.Table("videos").Where("id = ?", videoID).Update("comment_count", CommentCount)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

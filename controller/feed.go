@@ -4,6 +4,7 @@ import (
 	"assignment_bd/consts"
 	"assignment_bd/model"
 	"assignment_bd/service"
+	"assignment_bd/utils"
 	"context"
 	"net/http"
 	"time"
@@ -21,8 +22,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	// 查询数据库中的视频信息
 	lasttime := c.Query("latest_time")
 	println(lasttime)
-	user, _ := c.Get(consts.IdentityKey)
-	userId := user.(model.User).ID
+	uid, _ := utils.GetUid(c)
 	var feedResponse model.FeedResponse
 	feedResponse.Response.StatusCode = consts.STATUS_SUCCESS
 	feedResponse.Response.StatusMsg = "获取视频列表成功"
@@ -34,12 +34,12 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		feedResponse.VideoList = append(feedResponse.VideoList,
 			model.VideoInfo{
 				ID:            video.ID,
-				Author:        service.FindVideoAuthor(video.UserId),
+				Author:        service.UserInfoGetByUserID(video.UserID, uid),
 				PlayUrl:       video.PlayUrl,
 				CoverUrl:      video.CoverUrl,
 				FavoriteCount: video.FavoriteCount,
 				CommentCount:  video.CommentCount,
-				IsFavorite:    service.IsFavorite(userId, video.ID),
+				IsFavorite:    service.IsFavorite(uid, video.ID),
 				Title:         video.Title,
 			},
 		)

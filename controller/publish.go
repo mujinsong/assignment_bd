@@ -7,13 +7,13 @@ import (
 	"assignment_bd/service"
 	utils2 "assignment_bd/utils"
 	"context"
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 // Publish 发布视频的操作 （剩下逻辑注释本方法作者补写） 登录用户选择视频上传。
@@ -31,15 +31,15 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	user, _ := c.Get(consts.IdentityKey)
-	userId := user.(model.User).ID
-	log.Printf("获取到用户id:%v\n", userId)
+	userID := user.(model.User).ID
+	log.Printf("获取到用户id:%v\n", userID)
 	title := c.PostForm("title")
 	log.Printf("获取到视频title:%v\n", title)
 
 	localPath := "static/video/" + utils2.RandVideoName(data.Filename)
 	video := model.Video{
 		Title:   title,
-		UserId:  userId,
+		UserID:  userID,
 		PlayUrl: config.Server + config.Port + strings.Replace(localPath, "static", "", 1),
 	}
 	// 保存视频到本地
@@ -59,24 +59,19 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 	})
 }
 
-// PublishList 根据 user_id 查询用户 id，再查询这个用户发布的视频 （剩下逻辑注释本方法作者补写） 登录用户的视频发布列表，直接列出用户所有投稿过的视频。
-// TODO 这里的视频列表里的视频都是写死的，以后可以考虑用 oss 来存储，数据库里存储 URL
 func PublishList(ctx context.Context, c *app.RequestContext) {
 	//claims := jwt.ExtractClaims(ctx, c)
 	//当前用户ID
 	//userID := uint64(claims[middleware.IdentityKey].(float64))
 	//查询的ID
-	queryIDStr := c.Query("user_id")
-	queryID, _ := strconv.Atoi(queryIDStr)
+	uid, _ := utils2.GetUid(c)
 	var videoList []model.Video
-	_, err := service.GetVideoListByUserID(uint64(queryID), &videoList)
+	_, err := service.GetVideoListByUserID(uid, &videoList)
 	if err != nil {
 		return
 	}
-	user, err := service.UserInfoGetByUserID(queryIDStr)
-	if err != nil {
-		return
-	}
+	userID := utils2.StrToUint64(c.Query("user_id"))
+	user := service.UserInfoGetByUserID(userID, uid)
 	videoJOSN := make([]model.VideoInfo, len(videoList))
 	//todo
 	for i := 0; i < len(videoList); i++ {
@@ -84,39 +79,11 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 		videoJOSN[i].CoverUrl = videoList[i].CoverUrl
 		videoJOSN[i].Title = videoList[i].Title
 		videoJOSN[i].PlayUrl = videoList[i].PlayUrl
-		videoJOSN[i].Author = *user
+		videoJOSN[i].Author = user
 	}
 	c.JSON(http.StatusOK, utils.H{
 		"status_code": 0,
 		"status_msg":  "OK",
 		"video_list":  videoJOSN,
 	})
-}
-
-//type VideoInfo struct {
-//	ID            uint64    `json:"id"`             // 视频唯一标识
-//	Author        UserInfo `json:"author"`         // 视频作者信息
-//	PlayUrl       string   `json:"play_url"`       // 视频播放地址
-//	CoverUrl      string   `json:"cover_url"`      // 视频封面地址
-//	FavoriteCount uint64    `json:"favorite_count"` // 视频的点赞总数
-//	CommentCount  uint64    `json:"comment_count"`  // 视频的评论总数
-//	IsFavorite    bool     `json:"is_favorite"`    // true-已点赞，false-未点赞
-//	Title         string   `json:"title"`          // 视频标题
-//}
-
-// GetVideo 拼装一部分 另一部分在上传时进行
-func GetVideo(title string) model.VideoInfo {
-	var videoInfo model.VideoInfo
-	// 视频作者信息
-	//var userService service.UserInfo
-	//videoInfo.Author =
-	// 视频点赞总数 ： 功能未实现 默认0
-	videoInfo.FavoriteCount = 0
-	// 视频评论总数 ： 功能未实现 默认0
-	videoInfo.CommentCount = 0
-	// true-已点赞，false-未点赞
-	videoInfo.IsFavorite = false
-	// 视频标题
-	videoInfo.Title = title
-	return videoInfo
 }

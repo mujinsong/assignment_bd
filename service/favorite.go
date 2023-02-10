@@ -6,12 +6,13 @@ import (
 )
 
 /*
-	判断是否已经收藏视频
+判断是否已经收藏视频
+uid 是当前登录用户的id
 */
-func IsFavorite(userId, videoId uint64) bool {
-	// 通过userId和videoId查询是否存在记录
+func IsFavorite(uid, videoId uint64) bool {
+
 	var likeLog model.VideoLike
-	global.DB.Table("likes").Where("user_id = ? AND video_id = ?", userId, videoId).First(&likeLog)
+	global.DB.Table("likes").Where("user_id = ? AND video_id = ?", uid, videoId).First(&likeLog)
 	if likeLog.ID == 0 {
 		return false
 	} else {

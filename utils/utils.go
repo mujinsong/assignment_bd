@@ -6,6 +6,7 @@ import (
 	"errors"
 	"math/rand"
 	"regexp"
+	"strconv"
 	"time"
 	"unicode/utf8"
 
@@ -55,7 +56,9 @@ func RandStr(length int) string {
 	return string(result)
 }
 
-// GetUid 从请求上下文中获取uid
+/*
+从请求上下文中获取uid
+*/
 func GetUid(c *app.RequestContext) (uid uint64, err error) {
 	value, exists := c.Get(consts.IdentityKey)
 	if !exists {
@@ -67,4 +70,17 @@ func GetUid(c *app.RequestContext) (uid uint64, err error) {
 	}
 	uid = user.ID
 	return
+}
+
+func StrToUint64(str string) uint64 {
+	num, _ := strconv.Atoi(str)
+	return uint64(num)
+}
+func StrToUint8(str string) uint8 {
+	num, _ := strconv.Atoi(str)
+	return uint8(num)
+}
+
+func CurrentTime() string {
+	return time.Now().Format("2006-01-02 15:04:05")
 }

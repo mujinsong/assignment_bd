@@ -21,7 +21,7 @@ func MyJwt() {
 	global.HzJwtMw, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Key: []byte("tiktok jwt key"),
 		//Timeout:       time.Hour,
-		MaxRefresh:  time.Hour * 24 * 7,
+		MaxRefresh:  0,                           // token 永不过期 方便测试
 		TokenLookup: "query: token, form: token", //"header: Authorization", //  , cookie: jwt query: token ,
 		//TokenHeadName: "Bearer",
 		//Token 的返回
@@ -43,6 +43,7 @@ func MyJwt() {
 		},
 		//用户登陆（认证）
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
+			println("JWT认证")
 			var loginStruct struct {
 				Username string `form:"username" json:"username" query:"username" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`

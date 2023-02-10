@@ -71,7 +71,7 @@ func Like(uid uint64, videoID uint64, actionType int32) error {
 		if actionType == 1 {
 			// 点赞
 			likeLog = model.VideoLike{
-				UserId:     uid,
+				UserID:     uid,
 				VideoId:    videoID,
 				ActionType: 1,
 			}

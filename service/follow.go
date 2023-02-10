@@ -64,7 +64,21 @@ func FollowAndFollowedCount(userID uint64) (followCount, followedCount uint64, e
 // 	return false
 // }
 
-func IsFollow(masterID, followerID uint64) bool {
-	println(masterID, followerID)
-	return false
+/*
+判断是否关注该用户
+uid  当前登录的用户id
+userID 表示被查询的用户id
+*/
+func IsFollow(userID, uid uint64) bool {
+	// 自己肯定关注自己
+	if userID == uid {
+		return true
+	}
+	var likeLog model.Follow
+	global.DB.Model(model.Follow{}).Where("user_id = ? AND follower_id = ?", userID, uid).Take(&likeLog)
+	if likeLog.ActionType == 1 {
+		return true
+	} else {
+		return false
+	}
 }

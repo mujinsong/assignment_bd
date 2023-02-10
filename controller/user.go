@@ -5,6 +5,7 @@ import (
 	"assignment_bd/global"
 	"assignment_bd/model"
 	"assignment_bd/service"
+	"assignment_bd/utils"
 	"context"
 	"net/http"
 
@@ -43,19 +44,14 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // UserInfo 获取用户信息（剩下逻辑注释本方法作者补写）
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	// 获取指定用户的 ID，并请求用户详细信息 UserInfo
-	strID := c.Query("user_id")
-	userInfo, err := service.UserInfoGetByUserID(strID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.Response{
-			StatusCode: consts.STATUS_FAILURE,
-			StatusMsg:  "用户信息获取失败"})
-		return
-	}
+	userID := utils.StrToUint64(c.Query("user_id"))
+	uid, _ := utils.GetUid(c)
+	userInfo := service.UserInfoGetByUserID(userID, uid)
 	c.JSON(http.StatusOK, model.UserInfoResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
 			StatusMsg:  "进入个人信息页面",
 		},
-		UserInfo: userInfo,
+		UserInfo: &userInfo,
 	})
 }

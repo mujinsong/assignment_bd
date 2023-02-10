@@ -8,7 +8,6 @@ import (
 	"assignment_bd/utils"
 	"errors"
 	"regexp"
-	"strconv"
 	"time"
 	"unicode/utf8"
 
@@ -52,13 +51,6 @@ func Register(username, password string) (out *model.User, err error) {
 
 	return
 }
-func FindUser(username string) (user *model.User, err error) {
-	err = global.DB.Where("username = ?", username).Take(&user).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, errors.New("未注册")
-	}
-	return
-}
 
 /*注册成功后将用户信息插入数据库*/
 func CreateNewUser(username, password string) {
@@ -93,56 +85,22 @@ func Login(in *model.Login) (user *model.User, err error) {
 	return
 }
 
-//// UserInfoGetByUserID 通过ID获取用户信息
-//func UserInfoGetByUserID(userID string) (user *model.UserInfo, err error) {
-//	user = new(model.UserInfo)
-//	//fmt.Println(userID)
-//	id, err := strconv.ParseInt(userID, 10, 64)
-//	if err != nil {
-//		return nil, errors.New("获取用户信息失败")
-//	}
-//	err = GetUserInfoByUserID(uint64(id), user)
-//
-//	return user, nil
-//}
-//
-//// GetUserInfoByUserID 通过用户ID获取用户信息，为了不影响兼容性，所以没在原函数上改，另起一个，由原函数调用它
-//func GetUserInfoByUserID(id uint64, user *model.UserInfo) (err error) {
-//	var username string
-//	// 检查 userID 是否存在；若存在，获取用户信息
-//	err = global.DB.Select("username").Model(model.User{}).Where("id = ?", id).Limit(1).Take(&username).Error
-//	if errors.Is(err, gorm.ErrRecordNotFound) {
-//		return gorm.ErrRecordNotFound
-//	}
-//	followCount, followerCount, err := FollowAndFollowedCount(id)
-//	if err != nil {
-//		return err
-//	}
-//	//fmt.Println(followCount, followerCount)
-//	user.ID = id
-//	user.FollowCount = followCount
-//	user.FollowerCount = followerCount
-//	return
-//}
+/*
+	获取用户信息 通过用户id
 
-func UserInfoGetByUserID(userID string) (userinfo *model.UserInfo, err error) {
-	id, err := strconv.ParseInt(userID, 10, 64)
-	if err != nil {
-		return nil, errors.New("获取用户信息失败")
-	}
-	println("id:", id)
-	// 检查 userID 是否存在；若存在，获取用户信息
+uid  当前登录的用户id
+userID 表示被查询的用户id
+*/
+func UserInfoGetByUserID(userID, uid uint64) (userinfo model.UserInfo) {
 
 	user := model.User{}
-	err = global.DB.Table("users").Where("id = ?", id).Limit(1).Find(&user).Error
-	userinfo = &model.UserInfo{
+	global.DB.Table("users").Where("id = ?", userID).Limit(1).Find(&user)
+	userinfo = model.UserInfo{
 		ID:            user.ID,
 		Name:          user.Name,
 		FollowCount:   user.FollowCount,
 		FollowerCount: user.FollowerCount,
-		// TODO 判断是否关注该用户
-		IsFollow: false,
+		IsFollow:      IsFollow(user.ID, uid),
 	}
-	println("userinfo:", userinfo.ID, userinfo.Name, userinfo.FollowCount, userinfo.FollowerCount, userinfo.IsFollow)
-	return userinfo, nil
+	return
 }

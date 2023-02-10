@@ -100,7 +100,7 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		response[i].PlayUrl = (*videoList)[i].PlayUrl
 		response[i].Title = (*videoList)[i].Title
 		response[i].CoverUrl = (*videoList)[i].CoverUrl
-		response[i].Author = service.FindVideoAuthor((*videoList)[i].UserId)
+		response[i].Author = service.UserInfoGetByUserID((*videoList)[i].UserID, masterID)
 		response[i].FavoriteCount = likeCountList[i]
 		response[i].CommentCount = commentCountList[i]
 		response[i].IsFavorite = service.IsFavorite(masterID, (*videoList)[i].ID)

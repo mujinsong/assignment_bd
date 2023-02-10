@@ -2,7 +2,7 @@ package model
 
 type VideoLike struct {
 	ID         uint64 `json:"id"`
-	UserId     uint64 `json:"user_id"`
+	UserID     uint64 `json:"user_id"`
 	VideoId    uint64 `json:"video_id"`
 	ActionType uint8  `json:"action_type"`
 }

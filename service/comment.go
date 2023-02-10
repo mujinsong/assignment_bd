@@ -24,3 +24,44 @@ func GetCommentCountListByVideoIDList(videoIDList []uint64, commentCountList *[]
 	}
 	return nil
 }
+
+/*
+	将评论存入数据库
+
+用户可以对同一个视频进行多次评论
+*/
+//func SaveComment(comment *model.Comments) error {
+//	// 首先通过video_id和user_id查询是否已经评论过
+//
+//}
+
+func CreateComment(comment *model.Comments) error {
+	comment.ActionType = 1
+	result := global.DB.Table("comments").Create(comment)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+/*
+获取某个视频的评论列表
+*/
+func GetCommentList(videoID uint64, uid uint64) (commentList []model.Comment, err error) {
+	var comments []model.Comments
+	result := global.DB.Table("comments").Where("video_id = ? AND action_type = 1", videoID).Find(&comments)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	println("uid", uid)
+	// 获取用户信息
+	for comment := range comments {
+		commentList = append(commentList, model.Comment{
+			ID:         comments[comment].ID,
+			User:       UserInfoGetByUserID(comments[comment].UserID, uid),
+			Content:    comments[comment].Content,
+			CreateDate: comments[comment].CreateDate,
+		})
+	}
+	return commentList, nil
+}

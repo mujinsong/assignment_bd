@@ -33,6 +33,10 @@ func Follow(userID, followerID uint64) error {
 			Update("action_type", consts.FOLLOW).Error
 	}
 
+	if err != nil {
+		return err
+	}
+
 	// 如果没有出错，就更新user信息
 	// user1 是被关注的用户，user2是当前登录用户（也就是user1的粉丝）
 	var user1, user2 model.User
@@ -72,6 +76,10 @@ func UnFollow(userID, followerID uint64) error {
 			Where("user_id", userID).
 			Where("follower_id", followerID).
 			Update("action_type", consts.UNFOLLOW).Error
+	}
+
+	if err != nil {
+		return err
 	}
 
 	// 如果没有出错，就更新user信息
@@ -129,16 +137,24 @@ func GetFollowerList(userID uint64) ([]model.UserInfo, error) {
 	err = global.DB.Where("user_id = ?", userID).Where("action_type = ?", 1).Find(&follows).Error
 	users = make([]model.UserInfo, len(follows))
 
+	if err != nil {
+		return nil, err
+	}
+
 	for i, follow := range follows {
 		var user model.User
 		var checkFollow model.Follow
 		err = global.DB.Where("id = ?", follow.FollowerID).Find(&user).Error
 
 		// record not found 未找到记录说明未关注当前粉丝
-		global.DB.
+		err = global.DB.
 			Where("user_id", follow.FollowerID).
 			Where("follower_id = ?", userID).
-			Where("action_type = ?", 1).First(&checkFollow)
+			Where("action_type = ?", 1).First(&checkFollow).Error
+
+		if err != nil {
+			return nil, err
+		}
 
 		// todo 查询粉丝数（待写）
 
@@ -166,6 +182,10 @@ func GetFriendList(userID uint64) ([]model.FriendUser, error) {
 	err = global.DB.Where("user_id = ?", userID).Where("action_type = ?", 1).Find(&follows).Error
 	friends = make([]model.FriendUser, len(follows))
 
+	if err != nil {
+		return nil, err
+	}
+
 	for i, follow := range follows {
 		var user model.User
 		var friend model.FriendUser
@@ -180,7 +200,11 @@ func GetFriendList(userID uint64) ([]model.FriendUser, error) {
 		err = global.DB.
 			Where("from_user_id = ? AND to_user_id = ?", userID, follow.FollowerID).
 			Or("from_user_id = ? AND to_user_id = ?", follow.FollowerID, userID).
-			Order("create_at ASC").Limit(1).Find(&message).Error
+			Order("create_time ASC").Limit(1).Find(&message).Error
+
+		if err != nil {
+			return nil, err
+		}
 
 		// 如果是当前请求用户发送的消息，msgType 改成 1
 		if message.FromUserID == userID {

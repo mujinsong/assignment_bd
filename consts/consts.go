@@ -1,6 +1,8 @@
 package consts
 
 const (
+	READ                    = 1 // 该信息已读
+	UNREAD                  = 0 // 该信息未读
 	FOLLOW                  = 1 // 关注是1
 	UNFOLLOW                = 0 // 取关是0
 	IdentityKey             = "identity"

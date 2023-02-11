@@ -7,6 +7,7 @@ import (
 	"assignment_bd/service"
 	"assignment_bd/utils"
 	"context"
+	"github.com/golang-jwt/jwt/v4"
 	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -21,10 +22,29 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	println("注册操作")
 	_, err := service.Register(username, password)
 	if err != nil {
-		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		c.JSON(consts.ERROR, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
-	global.HzJwtMw.LoginHandler(ctx, c)
+
+	token := jwt.New(jwt.GetSigningMethod(global.HzJwtMw.SigningAlgorithm))
+	claims := token.Claims.(jwt.MapClaims)
+	id, err := service.GetUserIDByUsername(username)
+	if err != nil {
+		c.JSON(consts.ERROR, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		return
+	}
+	claims[consts.IdentityKey] = id
+
+	expire := global.HzJwtMw.TimeFunc().Add(global.HzJwtMw.Timeout)
+	claims["exp"] = expire.Unix()
+	claims["orig_iat"] = global.HzJwtMw.TimeFunc().Unix()
+	tokenString, err := token.SignedString(global.HzJwtMw.Key)
+	if err != nil {
+		return
+	}
+
+	global.HzJwtMw.LoginResponse(ctx, c, http.StatusOK, tokenString, expire)
+	//global.HzJwtMw.LoginHandler(ctx, c)
 }
 
 // Login 用户登录

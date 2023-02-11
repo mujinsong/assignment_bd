@@ -104,3 +104,12 @@ func UserInfoGetByUserID(userID, uid uint64) (userinfo model.UserInfo) {
 	}
 	return
 }
+
+func GetUserIDByUsername(username string) (id uint64, err error) {
+	err = nil
+	res := global.DB.Table("users").Select("id").Where("username = ?", username).Limit(1).Take(&id)
+	if res.RowsAffected == 0 {
+		return 0, errors.New("not Found")
+	}
+	return
+}

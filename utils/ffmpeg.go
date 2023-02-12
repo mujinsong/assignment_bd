@@ -28,7 +28,9 @@ func GetVideoName(videoPath string) string {
 func GetSnapshot(videoPath string) string {
 	buf := bytes.NewBuffer(nil)
 	videoPath = filepath.ToSlash("./" + videoPath)
-	ffmpeg.Input(videoPath).
+	ffmpeg.Input(videoPath, ffmpeg.KwArgs{
+		"loglevel": "quiet",
+	}).
 		Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,%d)", int(1))}).
 		Output("pipe:", ffmpeg.KwArgs{"vframes": 1, "format": "image2", "vcodec": "mjpeg"}).
 		WithOutput(buf, os.Stdout).
@@ -37,7 +39,7 @@ func GetSnapshot(videoPath string) string {
 	covername := "./" + GetVideoName(videoPath)
 	err = imaging.Save(coverdata, covername)
 	if err != nil {
-		println("failed to save image:", err)
+		//println("failed to save image:", err)
 	}
 	return covername[2:]
 }
@@ -50,6 +52,9 @@ func RandVideoName(filename string) string {
 	return RandStr(10) + videoType
 }
 
+/*
+获取视频类型 如.mp4
+*/
 func GetVideoType(filename string) string {
 	return filename[strings.LastIndex(filename, "."):]
 }

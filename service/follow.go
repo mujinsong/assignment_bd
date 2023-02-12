@@ -19,8 +19,8 @@ func Follow(userID, followerID uint64) error {
 
 	// 生成需要的列
 	follow = model.Follow{
-		UserID:     uint(userID),
-		FollowerID: uint(followerID),
+		UserID:     userID,
+		FollowerID: followerID,
 		ActionType: consts.FOLLOW,
 	}
 
@@ -60,8 +60,8 @@ func UnFollow(userID, followerID uint64) error {
 
 	// 生成需要的列
 	follow = model.Follow{
-		UserID:     uint(userID),
-		FollowerID: uint(followerID),
+		UserID:     userID,
+		FollowerID: followerID,
 		ActionType: consts.UNFOLLOW,
 	}
 
@@ -103,17 +103,16 @@ func GetFollowList(userID uint64) ([]model.UserInfo, error) {
 		var user model.User
 		err = global.DB.Where("id = ?", follow.UserID).Find(&user).Error
 
-		// todo 查询关注数（待写）
+		//todo 查询关注数（待写）
 
-		userInfo := model.UserInfo{
-			ID:   user.ID,
-			Name: user.Name,
-			//FollowCount:   233,
-			//FollowerCount: 233,
-			IsFollow: true,
-		}
-
-		users[i] = userInfo
+		//userInfo := model.UserInfo{
+		//	ID:   user.ID,
+		//	Name: user.Name,
+		//	//FollowCount:   233,
+		//	//FollowerCount: 233,
+		//	IsFollow: true,
+		//}
+		users[i] = UserInfoGetByUserID(user.ID, userID)
 	}
 
 	return users, err
@@ -142,17 +141,15 @@ func GetFollowerList(userID uint64) ([]model.UserInfo, error) {
 
 		// todo 查询粉丝数（待写）
 
-		userInfo := model.UserInfo{
-			ID:   user.ID,
-			Name: user.Name,
-			//FollowCount:   233,
-			//FollowerCount: 233,
-			IsFollow: checkFollow.ID != 0,
-		}
-
-		users[i] = userInfo
+		//userInfo := model.UserInfo{
+		//	ID:   user.ID,
+		//	Name: user.Name,
+		//	//FollowCount:   233,
+		//	//FollowerCount: 233,
+		//	IsFollow: checkFollow.ID != 0,
+		//}
+		users[i] = UserInfoGetByUserID(user.ID, userID)
 	}
-
 	return users, err
 }
 
@@ -232,14 +229,14 @@ func GetFriendList(userID uint64) ([]model.FriendUser, error) {
 //	return true, nil
 //}
 
-func GetFollowStatusList(followerID uint, userIDList []uint, isfollowerList []bool) error {
+func GetFollowStatusList(followerID uint64, userIDList []uint64, isfollowerList []bool) error {
 	var temp []model.Follow
 	if result := global.DB.Select("user_id", "action_type").Model(&model.Follow{}).
 		Where("follower_id = ? AND user_id IN ?", followerID, userIDList).Find(&temp); result.Error != nil {
 		return result.Error
 	}
 	isfollowerList = make([]bool, 0, len(userIDList))
-	mp := make(map[uint]bool)
+	mp := make(map[uint64]bool)
 	for _, v := range temp {
 		mp[v.UserID] = func() bool {
 			if v.ActionType == 0 {
@@ -262,32 +259,23 @@ func FollowAndFollowedCount(userID uint64) (followCount, followedCount uint64, e
 	return
 }
 
-// IsFollow 判断两者followerID是否关注masterID
-// func IsFollow(masterID, followerID uint64) bool {
-// 	var Type int8
-// 	global.DB.Model(model.Follow{}).Select("action_type").Where("user_id = ? AND follower_id = ?", masterID, followerID).Take(&Type)
-// 	if Type == 1 {
-// 		return true
-// 	}
-// 	return false
-// }
-
 /*
 判断是否关注该用户
-uid  当前登录的用户id
-userID 表示被查询的用户id
+
+	userID 是被关注者id，followerID是关注者的ID（也就是当前登录用户的ID）
 */
-func IsFollow(userID, uid uint64) bool {
+func IsFollow(userID, followerID uint64) bool {
 	// 自己肯定关注自己
-	//if userID == uid {
-	//	return true
-	//}
-	//var likeLog model.Follow
-	//global.DB.Model(model.Follow{}).Where("user_id = ? AND follower_id = ?", userID, uid).Take(&likeLog)
-	//if likeLog.ActionType == 1 {
-	//	return true
-	//} else {
-	//	return false
-	//}7
-	return true
+	if userID == followerID {
+		return true
+	}
+	var followLog []model.Follow
+	global.DB.Model(model.Follow{}).Where("user_id = ? AND follower_id = ?", userID, followerID).Find(&followLog)
+	if len(followLog) == 0 {
+		return false
+	} else if followLog[0].ActionType == 1 {
+		return true
+	} else {
+		return false
+	}
 }

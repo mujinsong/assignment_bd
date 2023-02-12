@@ -1,11 +1,11 @@
 package consts
 
 const (
-	FOLLOW                  = 1 // 关注是1
-	UNFOLLOW                = 0 // 取关是0
+	FOLLOW                  = uint8(1) // 关注是1
+	UNFOLLOW                = uint8(2) // 取关是2
 	IdentityKey             = "identity"
-	STATUS_SUCCESS          = int32(0)
-	STATUS_FAILURE          = int32(1)
+	STATUS_SUCCESS          = uint8(0)
+	STATUS_FAILURE          = uint8(1)
 	TOKEN_LENGTH            = 10
 	MIN_PASSWORD_PATTERN    = "^[_a-zA-Z0-9]{6,32}$"
 	MAX_USERNAME_LENGTH     = 30

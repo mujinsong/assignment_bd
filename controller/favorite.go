@@ -37,7 +37,7 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 		actionType = 2
 	}
 
-	err = service.Like(uid, uint64(videoID), int32(actionType))
+	err = service.Like(uid, uint64(videoID), uint8(actionType))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
 			StatusCode: consts.STATUS_FAILURE,
@@ -72,6 +72,7 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
+
 	videoList, err := service.GetVideoListByIDs(videoIDList)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -79,35 +80,25 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 			StatusMsg:  "操作失败"})
 		return
 	}
-	//fmt.Println("len:", len(*videoList))
-	length := len(*videoIDList)
+	//fmt.Println("用户", masterID, "查看用户", id, "的点赞视频列表", "其长度为", len(*videoList))
+	length := len(*videoList)
 	response := make([]model.VideoInfo, length)
-	likeCountList := make([]uint64, length)
-	commentCountList := make([]uint64, length)
-	err = service.GetLikeCountListByVideoIDList(*videoIDList, &likeCountList)
-	if err != nil {
-		return
-	}
-	err = service.GetCommentCountListByVideoIDList(*videoIDList, &commentCountList)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.Response{
-			StatusCode: consts.STATUS_FAILURE,
-			StatusMsg:  "操作失败"})
-		return
-	}
 	for i := 0; i < length; i++ {
 		response[i].ID = (*videoList)[i].ID
 		response[i].PlayUrl = (*videoList)[i].PlayUrl
 		response[i].Title = (*videoList)[i].Title
 		response[i].CoverUrl = (*videoList)[i].CoverUrl
 		response[i].Author = service.UserInfoGetByUserID((*videoList)[i].UserID, masterID)
-		response[i].FavoriteCount = likeCountList[i]
-		response[i].CommentCount = commentCountList[i]
+		response[i].FavoriteCount = (*videoList)[i].FavoriteCount
+		response[i].CommentCount = (*videoList)[i].CommentCount
 		response[i].IsFavorite = service.IsFavorite(masterID, (*videoList)[i].ID)
 	}
-	c.JSON(http.StatusOK, utils.H{
-		"status_code": consts.STATUS_SUCCESS,
-		"status_msg":  "Success",
-		"video_list":  response,
+
+	c.JSON(http.StatusOK, model.VideoListResponse{
+		Response: model.Response{
+			StatusCode: consts.STATUS_SUCCESS,
+			StatusMsg:  consts.MsgFlags[consts.SUCCESS],
+		},
+		VideoList: response,
 	})
 }

@@ -16,6 +16,7 @@ import (
 func RelationAction(ctx context.Context, c *app.RequestContext) {
 	var err error
 	followerID, err := utils.GetUid(c)
+	//println("该用户的id是：", followerID)
 	userID := c.Query("to_user_id")      // 对方用户的id
 	actionType := c.Query("action_type") // 1是关注; 2是取消关注
 
@@ -38,7 +39,6 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		statusCode = consts.STATUS_FAILURE
 		statusMsg = "操作失败"
-		fmt.Println(err)
 	}
 
 	// 返回响应
@@ -63,7 +63,7 @@ func FollowList(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		statusCode = consts.STATUS_FAILURE
 		statusMsg = "获取失败"
-		fmt.Println(err)
+
 	}
 
 	c.JSON(http.StatusOK, model.UserListResponse{

@@ -21,6 +21,8 @@ func MessageChat(ctx context.Context, c *app.RequestContext) {
 	ownID, _ := utils.GetUid(c)
 
 	// service 进行逻辑处理
+	// 要只限读取一次（可以只读map到当前时间之间的内容），客户端设置的每一秒都会调用这个接口
+	// 设置的只调用当前时间段前面的
 	messages, err = service.GetMessageList(ownID, utils.StrToUint64(c.Query("to_user_id")))
 
 	// 捕捉异常并返回给客户端
@@ -52,7 +54,7 @@ func MessageAction(ctx context.Context, c *app.RequestContext) {
 	err = service.SendMessage(fromUserID, toUserID, content)
 
 	if err != nil {
-		statusCode = consts.STATUS_SUCCESS
+		statusCode = consts.STATUS_FAILURE
 		statusMsg = "信息发送失败"
 		log.Println(err)
 	}

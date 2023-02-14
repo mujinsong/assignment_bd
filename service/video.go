@@ -48,9 +48,7 @@ func GetVideoListByUserID(userID uint64, videoList *[]model.Video) (int, error) 
 		return 0, nil
 	}
 	numVideos := int(result.RowsAffected)
-
 	return numVideos, nil
-
 }
 
 // PublishVideo 将用户上传的视频信息写入数据库(old)

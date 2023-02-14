@@ -20,7 +20,7 @@ import (
 // TODO 完善视频推送的逻辑 和 查询优化
 func Feed(ctx context.Context, c *app.RequestContext) {
 	// 查询数据库中的视频信息
-	lasttime := c.Query("latest_time")
+	lasttime := c.DefaultQuery("latest_time", time.Now().String())
 	println(lasttime)
 	uid, _ := utils.GetUid(c)
 	var feedResponse model.FeedResponse

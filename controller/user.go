@@ -19,7 +19,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	password := c.Query("password")
 
 	// 注册用户到数据库（service 层的操作）
-	println("注册操作")
+	//println("注册操作")
 	_, err := service.Register(username, password)
 	if err != nil {
 		c.JSON(consts.ERROR, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})

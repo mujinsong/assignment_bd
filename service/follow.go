@@ -213,8 +213,6 @@ func GetFriendList(userID uint64) ([]model.FriendUser, error) {
 			msgType = 1
 		}
 
-		fmt.Println(message)
-
 		// 生成每一个 friend
 		friend = model.FriendUser{
 			UserInfo: model.UserInfo{

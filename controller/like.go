@@ -35,7 +35,7 @@ func Like(ctx context.Context, c *app.RequestContext) {
 		actionType = 2
 	}
 
-	err = service.Like(uid, uint64(videoID), int32(actionType))
+	err = service.Like(uid, uint64(videoID), uint8(actionType))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{
 			StatusCode: consts.STATUS_FAILURE,

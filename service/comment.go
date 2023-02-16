@@ -6,24 +6,25 @@ import (
 )
 
 // GetCommentCountListByVideoIDList 获得评论数通过视频ID(群)
-func GetCommentCountListByVideoIDList(videoIDList []uint64, commentCountList *[]uint64) error {
-	var uniqueVideoList []model.VideoCommentCount
-	result := global.DB.Model(model.Comment{}).Select("video_id, COUNT(id) as count").
-		Where("action_type = 1 AND video_id in ?", videoIDList).Group("video_id").Find(&uniqueVideoList)
-	if result.Error != nil {
-		return result.Error
-	}
-	numVideos := result.RowsAffected
-	*commentCountList = make([]uint64, 0, numVideos)
-	mapVideoIDToCommentCount := make(map[uint64]uint64, numVideos)
-	for _, each := range uniqueVideoList {
-		mapVideoIDToCommentCount[uint64(each.VideoId)] = uint64(each.Count)
-	}
-	for _, videoID := range videoIDList {
-		*commentCountList = append(*commentCountList, mapVideoIDToCommentCount[uint64(videoID)])
-	}
-	return nil
-}
+
+//func GetCommentCountListByVideoIDList(videoIDList []uint64, commentCountList *[]uint64) error {
+//	var uniqueVideoList []model.VideoCommentCount
+//	result := global.DB.Model(model.Comment{}).Select("video_id, COUNT(id) as count").
+//		Where("action_type = 1 AND video_id in ?", videoIDList).Group("video_id").Find(&uniqueVideoList)
+//	if result.Error != nil {
+//		return result.Error
+//	}
+//	numVideos := result.RowsAffected
+//	*commentCountList = make([]uint64, 0, numVideos)
+//	mapVideoIDToCommentCount := make(map[uint64]uint64, numVideos)
+//	for _, each := range uniqueVideoList {
+//		mapVideoIDToCommentCount[uint64(each.VideoId)] = uint64(each.Count)
+//	}
+//	for _, videoID := range videoIDList {
+//		*commentCountList = append(*commentCountList, mapVideoIDToCommentCount[uint64(videoID)])
+//	}
+//	return nil
+//}
 
 /*
 	将评论存入数据库
@@ -53,7 +54,6 @@ func GetCommentList(videoID uint64, uid uint64) (commentList []model.Comment, er
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	println("uid", uid)
 	// 获取用户信息
 	for comment := range comments {
 		commentList = append(commentList, model.Comment{
@@ -64,4 +64,16 @@ func GetCommentList(videoID uint64, uid uint64) (commentList []model.Comment, er
 		})
 	}
 	return commentList, nil
+}
+
+/*
+删除评论
+直接修改数据库中的action_type 将其置为2 表示删除
+*/
+func DeleteComment(commentID uint64) error {
+	result := global.DB.Table("comments").Where("id = ?", commentID).Update("action_type", uint(2))
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

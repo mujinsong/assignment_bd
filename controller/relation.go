@@ -53,19 +53,23 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 
 // FollowList 用来获取用户关注列表
 func FollowList(ctx context.Context, c *app.RequestContext) {
+	// 定义一些变量
 	var err error
 	statusCode := consts.STATUS_SUCCESS
-	var statusMsg string
+	statusMsg := "获取关注列表成功"
 	userID := utils.StrToUint64(c.Query("user_id"))
 
+	// 在 service 进行逻辑处理
 	users, err := service.GetFollowList(userID) // 获取用户关注列表 service 层
 
+	// 捕捉异常并进行处理
 	if err != nil {
 		statusCode = consts.STATUS_FAILURE
-		statusMsg = "获取失败"
+		statusMsg = "获取关注列表失败"
 		fmt.Println(err)
 	}
 
+	// 向客户端返回响应
 	c.JSON(http.StatusOK, model.UserListResponse{
 		Response: model.Response{
 			StatusCode: statusCode,
@@ -79,14 +83,14 @@ func FollowList(ctx context.Context, c *app.RequestContext) {
 func FollowerList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	statusCode := consts.STATUS_SUCCESS
-	var statusMsg string
+	statusMsg := "获取粉丝列表成功"
 	userID := utils.StrToUint64(c.Query("user_id"))
 
 	users, err := service.GetFollowerList(userID) // 获取用户关注列表 service 层
 
 	if err != nil {
 		statusCode = consts.STATUS_FAILURE
-		statusMsg = "获取失败"
+		statusMsg = "获取粉丝列表失败"
 		fmt.Println(err)
 	}
 
@@ -103,14 +107,14 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 func FriendList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	statusCode := consts.STATUS_SUCCESS
-	var statusMsg string
+	statusMsg := "获取朋友列表成功"
 	userID := utils.StrToUint64(c.Query("user_id"))
 
 	friends, err := service.GetFriendList(userID) // 获取用户关注列表 service 层
 
 	if err != nil {
 		statusCode = consts.STATUS_FAILURE
-		statusMsg = "获取失败"
+		statusMsg = "获取朋友列表失败"
 		fmt.Println(err)
 	}
 

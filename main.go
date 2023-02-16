@@ -13,7 +13,7 @@ import (
 func main() {
 	var err error
 	//数据库初始化，DB为全局变量
-	global.DB, err = gorm.Open(mysql.Open(config.PankerDSN), &gorm.Config{})
+	global.DB, err = gorm.Open(mysql.Open(config.UseDSN), &gorm.Config{})
 	if err != nil {
 		panic("连接数据库失败, error=" + err.Error())
 	}

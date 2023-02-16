@@ -8,9 +8,5 @@
 *.bat
 
 test
-
-# nodejs
-node_modules
-
-
-
+*.log
+*.jpg

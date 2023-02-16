@@ -11,7 +11,7 @@ package model
 	/douyin/message/action/
 */
 type Response struct {
-	StatusCode int32  `json:"status_code"`
+	StatusCode int    `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`
 }
 

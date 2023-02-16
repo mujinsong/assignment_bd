@@ -102,6 +102,7 @@ func UserInfoGetByUserID(userID, uid uint64) (userinfo model.UserInfo) {
 		FollowerCount: user.FollowerCount,
 		IsFollow:      IsFollow(user.ID, uid),
 	}
+
 	return
 }
 

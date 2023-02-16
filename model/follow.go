@@ -1,10 +1,10 @@
 package model
 
 type Follow struct {
-	ID         uint `json:"id"`
-	UserID     uint `json:"user_id"`
-	FollowerID uint `json:"follower_id"`
-	ActionType int  `json:"action_type"`
+	ID         uint64 `json:"id"`
+	UserID     uint64 `json:"user_id"`
+	FollowerID uint64 `json:"follower_id"`
+	ActionType uint8  `json:"action_type"`
 }
 
 func (f Follow) TableName() string {

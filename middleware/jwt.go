@@ -43,7 +43,7 @@ func MyJwt() {
 		},
 		//用户登陆（认证）
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
-			println("JWT认证")
+			//println("JWT认证")
 			var loginStruct struct {
 				Username string `form:"username" json:"username" query:"username" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
@@ -55,7 +55,7 @@ func MyJwt() {
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println("user:", user)
+			//fmt.Println("user:", user)
 			//c.JSON(http.StatusOK, backend.UserLoginResponse{
 			//	Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
 			//	UserID:   uint64(user.ID),
@@ -91,9 +91,9 @@ func MyJwt() {
 		//	return true
 		//},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			c.JSON(code, map[string]interface{}{
-				"code":    code,
-				"message": message,
+			c.JSON(http.StatusOK, model.Response{
+				StatusCode: 1,
+				StatusMsg:  message,
 			})
 		},
 		//todo 把负载

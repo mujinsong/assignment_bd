@@ -84,3 +84,7 @@ func StrToUint8(str string) uint8 {
 func CurrentTime() string {
 	return time.Now().Format("2006-01-02 15:04:05")
 }
+
+func GetUnionID(user1, user2 uint64) string {
+	return strconv.Itoa(int(user1)) + "_" + strconv.Itoa(int(user2))
+}

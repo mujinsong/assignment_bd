@@ -2,8 +2,10 @@ package utils
 
 import (
 	"assignment_bd/consts"
+	"assignment_bd/global"
 	"assignment_bd/model"
 	"errors"
+	"github.com/hertz-contrib/jwt"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -70,6 +72,16 @@ func GetUid(c *app.RequestContext) (uid uint64, err error) {
 	}
 	uid = user.ID
 	return
+}
+
+func GetUidFromToken(token string) (uid uint64, err error) {
+	tokenValue, err := global.HzJwtMw.ParseTokenString(token)
+	if err != nil {
+		return 0, err
+	}
+	claims := jwt.ExtractClaimsFromToken(tokenValue)
+	uid = uint64(int(claims[consts.IdentityKey].(float64)))
+	return uid, nil
 }
 
 func StrToUint64(str string) uint64 {

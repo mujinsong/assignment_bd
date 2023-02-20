@@ -22,7 +22,17 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	// 查询数据库中的视频信息
 	lasttime := c.DefaultQuery("latest_time", time.Now().String())
 	println(lasttime)
-	uid, _ := utils.GetUid(c)
+	//fmt.Println(c)
+	token := c.DefaultQuery("token", "")
+	uid, err := utils.GetUidFromToken(token)
+	if err != nil {
+		return
+	}
+	//uid, err := utils.GetUid(c)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	//return
+	//}
 	var feedResponse model.FeedResponse
 	feedResponse.Response.StatusCode = consts.STATUS_SUCCESS
 	feedResponse.Response.StatusMsg = "获取视频列表成功"
@@ -43,6 +53,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 				Title:         video.Title,
 			},
 		)
+		//fmt.Println(service.UserInfoGetByUserID(video.UserID, uid))
 	}
 
 	// 首先获取视频列表 然后通过视频列表中的userId获取用户信息

@@ -19,10 +19,11 @@ func main() {
 	}
 	// 设置项目的 URL， 然后初始化路由
 	r := server.Default(
-		server.WithMaxRequestBodySize(1024*1024*1000), // 运行上传的最大文件大小 1000M
+		server.WithMaxRequestBodySize(1024*1024*1000), // 上传的最大文件大小 1000M
 		server.WithHostPorts(config.Port),             // 项目运行的端口
 		server.WithStreamBody(true),                   // 开启流式 body
-		server.WithIdleTimeout(60),                    // 连接空闲超时时间
+		server.WithIdleTimeout(30),                    // 连接空闲超时时间
+		server.WithExitWaitTime(600),                  // 退出等待时间
 	)
 	middleware.MyJwt()
 	initRouter(r)

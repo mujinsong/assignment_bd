@@ -7,12 +7,11 @@ import (
 	"assignment_bd/service"
 	utils2 "assignment_bd/utils"
 	"context"
+	"github.com/cloudwego/hertz/pkg/app"
+	"lib"
 	"log"
 	"net/http"
 	"strings"
-	"time"
-
-	"github.com/cloudwego/hertz/pkg/app"
 )
 
 // Publish 发布视频的操作 （剩下逻辑注释本方法作者补写） 登录用户选择视频上传。
@@ -33,27 +32,26 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 	title := c.PostForm("title")
 	log.Printf("获取到视频title:%v\n", title)
 
-	localPath := "static/video/" + utils2.RandVideoName(data.Filename)
+	videoPath := "static/video/" + utils2.RandVideoName(data.Filename)
 	video := model.Video{
 		Title:   title,
 		UserID:  userID,
-		PlayUrl: config.UseServer + config.Port + strings.Replace(localPath, "static", "", 1),
+		PlayUrl: config.UseServer + config.Port + strings.Replace(videoPath, "static", "", 1),
 	}
 	// 保存视频到本地
-	c.SaveUploadedFile(data, localPath)
-
-	// 异步执行 为了防止视频还没有上传完就生成封面 如果5秒后还没有上传完成就会报错
-	time.AfterFunc(5*time.Second, func() {
-		// 生成视频封面
-		video.CoverUrl = config.UseServer + config.Port + strings.Replace(utils2.GetSnapshot(localPath), "static", "", 1)
-		// 保存视频信息到数据库
-		service.PublishVideo(&video)
-	})
+	println("开始保存视频到本地")
+	c.SaveUploadedFile(data, videoPath)
+	if lib.IsExit(videoPath) {
+		println("视频保存成功")
+	} else {
+		println("视频保存失败")
+	}
+	video.CoverUrl = config.UseServer + config.Port + strings.Replace(utils2.GetSnapshot(videoPath), "static", "", 1)
+	service.PublishVideo(&video)
 	c.JSON(http.StatusOK, model.Response{
 		StatusCode: 0,
 		StatusMsg:  "uploaded successfully",
 	})
-
 }
 
 /* PublishList 查询用户发布的视频列表

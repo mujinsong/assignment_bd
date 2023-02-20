@@ -89,7 +89,7 @@ CREATE TABLE `messages`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id主键',
   `from_user_id` int NOT NULL COMMENT '发送消息的用户id',
   `to_user_id` int NOT NULL COMMENT '接收消息的用户id',
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '消息内容',
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '消息内容',
   `create_time` bigint NOT NULL COMMENT '发送消息的时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = DYNAMIC;

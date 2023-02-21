@@ -52,26 +52,6 @@ func GetVideoListByUserID(userID uint64, videoList *[]model.Video) (int, error) 
 	return numVideos, nil
 }
 
-// PublishVideo 将用户上传的视频信息写入数据库(old)
-//func PublishVideo(ctx *gin.Context,userID uint64, videoID uint64, videoName string, coverName string, title string) error {
-//	video := model.Video{
-//		ID:       videoID,
-//		Title:    title,
-//		PlayUrl:  videoName,
-//		CoverUrl: coverName,
-//		//FavoriteCount : 0,
-//		//CommentCount : 0,
-//		Author: model.User{
-//			ID: int(userID),
-//		},
-//		CreatedAt: time.Now(),
-//	}
-//	if global.DB.WithContext(ctx).Create(&video).Error != nil {
-//		return errors.New("video表插入失败")
-//	}
-//	return nil
-//}
-
 /*
 返回按投稿时间倒序的视频列表 参数为最后一次获取的视频的时间
 */

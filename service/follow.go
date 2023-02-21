@@ -4,8 +4,6 @@ import (
 	"assignment_bd/consts"
 	"assignment_bd/global"
 	"assignment_bd/model"
-	"fmt"
-	"strconv"
 )
 
 // Follow 关注用户
@@ -56,9 +54,6 @@ func Follow(userID, followerID uint64) error {
 
 // UnFollow 和 UnFollow 基本一样， 取消关注用户
 func UnFollow(userID, followerID uint64) error {
-	fmt.Println("userID == " + strconv.Itoa(int(userID)))
-	fmt.Println("followerID == " + strconv.Itoa(int(followerID)))
-
 	var err error
 	var follow model.Follow
 

@@ -17,7 +17,7 @@ import (
 
 // Register 注册用户，验证用户输入的注册信息，并且随机加密盐，给用户加密
 // todo 注册，因为和登录一样需要传入的都是用户名的密码，所以我这里传的model.Login(可改)
-func Register(username, password string) (out *model.User, err error) {
+func Register(username, password string) (id uint64, err error) {
 	in := model.Login{
 		Username: username,
 		Password: password,
@@ -26,34 +26,33 @@ func Register(username, password string) (out *model.User, err error) {
 	// 验证用户名合法性
 	if utf8.RuneCountInString(username) > consts.MAX_USERNAME_LENGTH ||
 		utf8.RuneCountInString(username) <= 0 {
-		//c.JSON(consts.SUCCESS, model.Response{StatusCode: 1, StatusMsg: "非法用户名"})
-		return nil, errors.New("非法用户名")
+		return 0, errors.New("非法用户名")
 	}
 
 	// 验证密码合法性
 	if ok, _ := regexp.MatchString(consts.MIN_PASSWORD_PATTERN, password); !ok {
 		//c.JSON(consts.SUCCESS, model.Response{StatusCode: 1, StatusMsg: "密码长度6-32，由字母大小写下划线组成"})
-		return nil, errors.New("密码长度6-32，由字母大小写下划线组成")
+		return 0, errors.New("密码长度6-32，由字母大小写下划线组成")
 	}
 
 	//密码用户名不能为空
 	if in.Password == "" || in.Username == "" {
-		return nil, errors.New("用户名和密码不能为空")
+		return 0, errors.New("用户名和密码不能为空")
 	}
 
 	//查询是否已有该用户名
-	result := global.DB.Where("username = ?", in.Username).Take(&out)
-	if result.RowsAffected != 0 {
-		return nil, errors.New("已有该用户名，请登录或换一个用户名注册")
+	var user []model.User
+	global.DB.Table("users").Where("username = ?", in.Username).Find(&user)
+	if len(user) != 0 {
+		return 0, errors.New("已有该用户名，请登录或换一个用户名注册")
 	} else {
-		CreateNewUser(in.Username, in.Password)
+		id = CreateNewUser(in.Username, in.Password)
 	}
-
 	return
 }
 
 /*注册成功后将用户信息插入数据库*/
-func CreateNewUser(username, password string) {
+func CreateNewUser(username, password string) uint64 {
 	NewUser := model.User{
 		Username: username,
 		Password: password,
@@ -68,6 +67,7 @@ func CreateNewUser(username, password string) {
 	NewUser.Password = utils.EncryptPassword(NewUser.Password, NewUser.Salt)
 	//插入users数据库
 	global.DB.Table("users").Create(&NewUser)
+	return NewUser.ID
 }
 
 // Login 执行登录 废弃
@@ -81,7 +81,6 @@ func Login(in *model.Login) (user *model.User, err error) {
 	if utils.EncryptPassword(in.Password, user.Salt) != user.Password {
 		return nil, errors.New("帐号或密码错误")
 	}
-
 	return
 }
 

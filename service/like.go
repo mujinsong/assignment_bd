@@ -56,13 +56,11 @@ func GetLikeCountListByVideoIDList(videoIDList []uint64, likeCountList *[]uint64
 
 // Like 点赞视频操作
 func Like(uid uint64, videoID uint64, actionType uint8) error {
-	// TODO 从token中获取用户ID
 	// 查询数据库是否已经存在数据
 	// 有： 更新 是否相同：是：不操作
 	//                   不是：更新
 	// 没有：是不是点赞，是：插入数据
 	//                不是：不操作
-
 	var likeLog []model.VideoLike
 	global.DB.Table("likes").Where("user_id = ? AND video_id = ?", uid, videoID).Find(&likeLog)
 	if len(likeLog) == 0 {

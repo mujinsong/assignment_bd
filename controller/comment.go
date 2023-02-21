@@ -44,8 +44,6 @@ func CommentAction(ctx context.Context, c *app.RequestContext) {
 			return
 		}
 		// 返回评论ID
-		////println("成功发表评论,用户ID为", comment.UserID)
-
 		c.JSON(consts.SUCCESS, model.CommentResponse{
 			Response: model.Response{
 				StatusCode: consts.STATUS_SUCCESS,
@@ -77,7 +75,6 @@ func CommentAction(ctx context.Context, c *app.RequestContext) {
 
 // CommentList 获取评论列表
 func CommentList(ctx context.Context, c *app.RequestContext) {
-	////println("获取评论列表")
 	// 解析参数
 	uid, _ := utils.GetUid(c)
 	videoID := utils.StrToUint64(c.Query("video_id"))

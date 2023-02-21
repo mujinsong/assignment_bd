@@ -39,7 +39,7 @@ func GetSnapshot(videoPath string) string {
 	covername := "./" + GetVideoName(videoPath)
 	err = imaging.Save(coverdata, covername)
 	if err != nil {
-		//println("failed to save image:", err)
+		println("failed to save image:", err)
 	}
 	return covername[2:]
 }

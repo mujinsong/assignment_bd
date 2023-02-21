@@ -17,8 +17,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	password := c.Query("password")
 
 	// 注册用户到数据库（service 层的操作）
-	//println("注册操作")
-	_, err := service.Register(username, password)
+	id, err := service.Register(username, password)
 	if err != nil {
 		c.JSON(consts.SUCCESS, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
@@ -26,11 +25,11 @@ func Register(ctx context.Context, c *app.RequestContext) {
 
 	token := jwt.New(jwt.GetSigningMethod(global.HzJwtMw.SigningAlgorithm))
 	claims := token.Claims.(jwt.MapClaims)
-	id, err := service.GetUserIDByUsername(username)
-	if err != nil {
-		c.JSON(consts.SUCCESS, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
-		return
-	}
+	//id, err := service.GetUserIDByUsername(username)
+	//if err != nil {
+	//	c.JSON(consts.SUCCESS, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+	//	return
+	//}
 	claims[consts.IdentityKey] = id
 
 	expire := global.HzJwtMw.TimeFunc().Add(global.HzJwtMw.Timeout)
@@ -55,7 +54,6 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		c.JSON(consts.SUCCESS, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
-
 	global.HzJwtMw.LoginHandler(ctx, c)
 }
 

@@ -7,10 +7,10 @@ import (
 	"assignment_bd/service"
 	"context"
 	"fmt"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
 )
@@ -42,7 +42,6 @@ func MyJwt() {
 		},
 		//用户登陆（认证）
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
-			//println("JWT认证")
 			var loginStruct struct {
 				Username string `form:"username" json:"username" query:"username" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
 				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`

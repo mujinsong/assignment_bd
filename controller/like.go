@@ -46,7 +46,3 @@ func Like(ctx context.Context, c *app.RequestContext) {
 		StatusCode: consts.STATUS_SUCCESS,
 		StatusMsg:  "success"})
 }
-
-// Deprecated: LikeList 点赞列表，见favorite.go
-func LikeList(ctx context.Context, c *app.RequestContext) {
-}

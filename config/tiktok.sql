@@ -108,7 +108,7 @@ INSERT INTO `messages` VALUES (28, 2, 3, '哈喽', 1676358291876311800);
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `username` varchar(32) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL COMMENT '用户名',
+  `username` varchar(32) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL UNIQUE COMMENT '用户名',
   `password` varchar(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '密码',
   `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户的昵称',
   `salt` varchar(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT '加密盐-生成密码用',
@@ -149,5 +149,12 @@ CREATE TABLE `videos`  (
 INSERT INTO `videos` VALUES (1, 3, 'http://81.68.91.70/video/1.mp4', 'http://81.68.91.70/image/1.jpg', '填充的视频,避免视频列表是空的', '2023-02-10 10:18:26', 7, 3);
 INSERT INTO `videos` VALUES (2, 3, 'http://81.68.91.70/video/2.mp4', 'http://81.68.91.70/image/2.jpg', '测试视频,无封面', '2023-02-09 22:39:12', 2, 0);
 INSERT INTO `videos` VALUES (3, 3, 'http://81.68.91.70/video/3.mp4', 'http://81.68.91.70/image/3.jpg', '测试视频流完结,视频为外链', '2023-02-09 22:31:58', 1, 0);
+
+# 建立索引
+create index index_createdat on videos(created_at);
+create index index_userid_videoid on likes(user_id,video_id);
+create index index_userid_followerid on follows(user_id,follower_id);
+create index index_from_to_createtime on messages(from_user_id,to_user_id,create_time);
+
 
 SET FOREIGN_KEY_CHECKS = 1;

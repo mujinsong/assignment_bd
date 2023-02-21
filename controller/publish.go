@@ -26,10 +26,7 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 	}
 	user, _ := c.Get(consts.IdentityKey)
 	userID := user.(model.User).ID
-	log.Printf("获取到用户id:%v\n", userID)
 	title := c.PostForm("title")
-	log.Printf("获取到视频title:%v\n", title)
-
 	videoPath := "static/video/" + utils2.RandVideoName(data.Filename)
 	video := model.Video{
 		Title:   title,
@@ -73,11 +70,6 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 		videoJOSN[i].FavoriteCount = videoList[i].FavoriteCount
 		videoJOSN[i].CommentCount = videoList[i].CommentCount
 	}
-	//println("用户", user.Name, "该用户的视频列表数目为：", len(videoJOSN))
-	if uid == userID {
-		//println("查询的是自己的视频列表")
-	}
-
 	c.JSON(consts.SUCCESS, model.VideoListResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,

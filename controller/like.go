@@ -44,7 +44,7 @@ func Like(ctx context.Context, c *app.RequestContext) {
 	}
 	c.JSON(http.StatusInternalServerError, model.Response{
 		StatusCode: consts.STATUS_SUCCESS,
-		StatusMsg:  "Success"})
+		StatusMsg:  "success"})
 }
 
 // Deprecated: LikeList 点赞列表，见favorite.go

@@ -8,7 +8,6 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"log"
-	"net/http"
 )
 
 // MessageChat 是获取聊天记录
@@ -17,7 +16,7 @@ func MessageChat(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var messages []model.Message
 	statusCode := consts.STATUS_SUCCESS
-	statusMsg := "获取聊天记录成功"
+	statusMsg := "success"
 	ownID, _ := utils.GetUid(c)
 
 	// service 进行逻辑处理
@@ -33,7 +32,7 @@ func MessageChat(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 向客户端返回响应
-	c.JSON(http.StatusOK, model.MessageResponse{
+	c.JSON(consts.SUCCESS, model.MessageResponse{
 		Response: model.Response{
 			StatusCode: statusCode,
 			StatusMsg:  statusMsg,
@@ -46,7 +45,7 @@ func MessageChat(ctx context.Context, c *app.RequestContext) {
 func MessageAction(ctx context.Context, c *app.RequestContext) {
 	var err error
 	statusCode := consts.STATUS_SUCCESS
-	statusMsg := "信息发送成功"
+	statusMsg := "success"
 	fromUserID, _ := utils.GetUid(c)
 	toUserID := utils.StrToUint64(c.Query("to_user_id"))
 	content := c.Query("content")
@@ -59,7 +58,7 @@ func MessageAction(ctx context.Context, c *app.RequestContext) {
 		log.Println(err)
 	}
 
-	c.JSON(http.StatusOK, model.Response{
+	c.JSON(consts.SUCCESS, model.Response{
 		StatusCode: statusCode,
 		StatusMsg:  statusMsg,
 	})

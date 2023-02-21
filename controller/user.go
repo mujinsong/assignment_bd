@@ -7,10 +7,8 @@ import (
 	"assignment_bd/service"
 	"assignment_bd/utils"
 	"context"
-	"github.com/golang-jwt/jwt/v4"
-	"net/http"
-
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // Register 用户注册账号（剩下逻辑注释本方法作者补写）
@@ -22,7 +20,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	//println("注册操作")
 	_, err := service.Register(username, password)
 	if err != nil {
-		c.JSON(consts.ERROR, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		c.JSON(consts.SUCCESS, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
 
@@ -30,7 +28,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	claims := token.Claims.(jwt.MapClaims)
 	id, err := service.GetUserIDByUsername(username)
 	if err != nil {
-		c.JSON(consts.ERROR, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		c.JSON(consts.SUCCESS, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
 	claims[consts.IdentityKey] = id
@@ -43,7 +41,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	global.HzJwtMw.LoginResponse(ctx, c, http.StatusOK, tokenString, expire)
+	global.HzJwtMw.LoginResponse(ctx, c, consts.SUCCESS, tokenString, expire)
 	//global.HzJwtMw.LoginHandler(ctx, c)
 }
 
@@ -54,7 +52,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	_, err := service.Login(&model.Login{Username: username, Password: password})
 	if err != nil {
-		c.JSON(http.StatusOK, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
+		c.JSON(consts.SUCCESS, model.Response{StatusCode: consts.STATUS_FAILURE, StatusMsg: err.Error()})
 		return
 	}
 
@@ -67,7 +65,7 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	userID := utils.StrToUint64(c.Query("user_id"))
 	uid, _ := utils.GetUid(c)
 	userInfo := service.UserInfoGetByUserID(userID, uid)
-	c.JSON(http.StatusOK, model.UserInfoResponse{
+	c.JSON(consts.SUCCESS, model.UserInfoResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
 			StatusMsg:  "进入个人信息页面",

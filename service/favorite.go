@@ -10,7 +10,9 @@ import (
 uid 是当前登录用户的id
 */
 func IsFavorite(uid, videoId uint64) bool {
-
+	if uid == 0 {
+		return false
+	}
 	var likeLog []model.VideoLike
 	global.DB.Table("likes").Where("user_id = ? AND video_id = ?", uid, videoId).Find(&likeLog)
 	// 通过判断likeLog的长度来判断是否已经收藏

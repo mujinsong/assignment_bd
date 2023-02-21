@@ -6,10 +6,9 @@ import (
 	"assignment_bd/service"
 	"assignment_bd/utils"
 	"context"
-	"net/http"
-	"time"
-
 	"github.com/cloudwego/hertz/pkg/app"
+	"strconv"
+	"time"
 )
 
 /*
@@ -20,25 +19,18 @@ import (
 // TODO 完善视频推送的逻辑 和 查询优化
 func Feed(ctx context.Context, c *app.RequestContext) {
 	// 查询数据库中的视频信息
-	lasttime := c.DefaultQuery("latest_time", time.Now().String())
-	println(lasttime)
-	//fmt.Println(c)
+	lasttime := c.DefaultQuery("latest_time", strconv.Itoa(int(time.Now().Unix())))
 	token := c.DefaultQuery("token", "")
 	uid, err := utils.GetUidFromToken(token)
 	if err != nil {
-		return
+		uid = 0
 	}
-	//uid, err := utils.GetUid(c)
-	//if err != nil {
-	//	fmt.Println(err)
-	//	//return
-	//}
 	var feedResponse model.FeedResponse
 	feedResponse.Response.StatusCode = consts.STATUS_SUCCESS
-	feedResponse.Response.StatusMsg = "获取视频列表成功"
+	feedResponse.Response.StatusMsg = "success"
 	feedResponse.NextTime = uint64(time.Now().Unix())
 
-	videolist := service.FindVideos()
+	videolist := service.FindVideos(lasttime)
 	// 通过视频列表中的userId获取用户信息
 	for _, video := range videolist {
 		feedResponse.VideoList = append(feedResponse.VideoList,
@@ -53,10 +45,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 				Title:         video.Title,
 			},
 		)
-		//fmt.Println(service.UserInfoGetByUserID(video.UserID, uid))
 	}
-
 	// 首先获取视频列表 然后通过视频列表中的userId获取用户信息
-	c.JSON(http.StatusOK, feedResponse)
-
+	c.JSON(consts.SUCCESS, feedResponse)
 }

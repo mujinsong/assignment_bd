@@ -7,7 +7,6 @@ import (
 	"assignment_bd/service"
 	"context"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -32,13 +31,13 @@ func MyJwt() {
 			}
 			claim := jwt.ExtractClaimsFromToken(parseToken)
 			id := claim[consts.IdentityKey]
-
-			c.JSON(http.StatusOK, utils.H{
-				"code":  code,
-				"token": token,
-				//"expire":  expire.Format(time.RFC3339),
-				"message": "success",
-				"user_id": id,
+			c.JSON(consts.SUCCESS, model.UserLoginResponse{
+				Response: model.Response{
+					StatusCode: consts.STATUS_SUCCESS,
+					StatusMsg:  "success",
+				},
+				UserID: uint64(id.(float64)),
+				Token:  token,
 			})
 		},
 		//用户登陆（认证）
@@ -55,12 +54,6 @@ func MyJwt() {
 			if err != nil {
 				return nil, err
 			}
-			//fmt.Println("user:", user)
-			//c.JSON(http.StatusOK, backend.UserLoginResponse{
-			//	Response: backend.Response{StatusCode: 200, StatusMsg: "OK"},
-			//	UserID:   uint64(user.ID),
-			//	Token:
-			//})
 			return user, nil
 		},
 		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
@@ -91,7 +84,7 @@ func MyJwt() {
 		//	return true
 		//},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			c.JSON(http.StatusOK, model.Response{
+			c.JSON(consts.SUCCESS, model.Response{
 				StatusCode: 1,
 				StatusMsg:  message,
 			})

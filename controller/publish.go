@@ -8,9 +8,7 @@ import (
 	utils2 "assignment_bd/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
-	"lib"
 	"log"
-	"net/http"
 	"strings"
 )
 
@@ -20,7 +18,7 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 	data, err := c.FormFile("data")
 	if err != nil {
 		log.Printf("获取视频流失败:%v", err)
-		c.JSON(http.StatusOK, model.Response{
+		c.JSON(consts.SUCCESS, model.Response{
 			StatusCode: 1,
 			StatusMsg:  err.Error(),
 		})
@@ -39,16 +37,10 @@ func Publish(ctx context.Context, c *app.RequestContext) {
 		PlayUrl: config.UseServer + config.Port + strings.Replace(videoPath, "static", "", 1),
 	}
 	// 保存视频到本地
-	println("开始保存视频到本地")
 	c.SaveUploadedFile(data, videoPath)
-	if lib.IsExit(videoPath) {
-		println("视频保存成功")
-	} else {
-		println("视频保存失败")
-	}
 	video.CoverUrl = config.UseServer + config.Port + strings.Replace(utils2.GetSnapshot(videoPath), "static", "", 1)
 	service.PublishVideo(&video)
-	c.JSON(http.StatusOK, model.Response{
+	c.JSON(consts.SUCCESS, model.Response{
 		StatusCode: 0,
 		StatusMsg:  "uploaded successfully",
 	})
@@ -86,7 +78,7 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 		//println("查询的是自己的视频列表")
 	}
 
-	c.JSON(http.StatusOK, model.VideoListResponse{
+	c.JSON(consts.SUCCESS, model.VideoListResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
 			StatusMsg:  consts.MsgFlags[consts.SUCCESS],

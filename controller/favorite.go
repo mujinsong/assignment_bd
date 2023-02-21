@@ -23,7 +23,6 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	uid := payload.(model.User).ID
-	//fmt.Println(uid)
 	videoIDStr := c.Query("video_id")
 	videoID, err := strconv.Atoi(videoIDStr)
 	if err != nil {
@@ -44,9 +43,9 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 			StatusMsg:  "操作失败"})
 		return
 	}
-	c.JSON(http.StatusOK, model.Response{
+	c.JSON(consts.SUCCESS, model.Response{
 		StatusCode: consts.STATUS_SUCCESS,
-		StatusMsg:  "Success"})
+		StatusMsg:  "success"})
 }
 
 // func FavoriteList (
@@ -65,9 +64,9 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	}
 	//fmt.Println("len:", len(*videoIDList))
 	if len(*videoIDList) == 0 {
-		c.JSON(http.StatusOK, utils.H{
+		c.JSON(consts.SUCCESS, utils.H{
 			"status_code": consts.STATUS_SUCCESS,
-			"status_msg":  "Success",
+			"status_msg":  "success",
 			"video_list":  nil,
 		})
 		return
@@ -94,7 +93,7 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		response[i].IsFavorite = service.IsFavorite(masterID, (*videoList)[i].ID)
 	}
 
-	c.JSON(http.StatusOK, model.VideoListResponse{
+	c.JSON(consts.SUCCESS, model.VideoListResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
 			StatusMsg:  consts.MsgFlags[consts.SUCCESS],

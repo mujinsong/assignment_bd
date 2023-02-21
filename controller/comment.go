@@ -46,10 +46,10 @@ func CommentAction(ctx context.Context, c *app.RequestContext) {
 		// 返回评论ID
 		////println("成功发表评论,用户ID为", comment.UserID)
 
-		c.JSON(http.StatusOK, model.CommentResponse{
+		c.JSON(consts.SUCCESS, model.CommentResponse{
 			Response: model.Response{
 				StatusCode: consts.STATUS_SUCCESS,
-				StatusMsg:  "Success"},
+				StatusMsg:  "success"},
 			Comment: model.Comment{
 				ID: comment.ID,
 				// 这里返回的是自己的信息
@@ -68,7 +68,7 @@ func CommentAction(ctx context.Context, c *app.RequestContext) {
 				StatusMsg:  consts.MsgFlags[consts.ERROR]})
 			return
 		}
-		c.JSON(http.StatusOK, model.Response{
+		c.JSON(consts.SUCCESS, model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
 			StatusMsg:  consts.MsgFlags[consts.SUCCESS],
 		})
@@ -90,10 +90,10 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	// 返回评论列表
-	c.JSON(http.StatusOK, model.CommentListResponse{
+	c.JSON(consts.SUCCESS, model.CommentListResponse{
 		Response: model.Response{
 			StatusCode: consts.STATUS_SUCCESS,
-			StatusMsg:  "Success"},
+			StatusMsg:  "success"},
 		CommentList: comments,
 	})
 }

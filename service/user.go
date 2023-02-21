@@ -26,13 +26,13 @@ func Register(username, password string) (out *model.User, err error) {
 	// 验证用户名合法性
 	if utf8.RuneCountInString(username) > consts.MAX_USERNAME_LENGTH ||
 		utf8.RuneCountInString(username) <= 0 {
-		//c.JSON(http.StatusOK, model.Response{StatusCode: 1, StatusMsg: "非法用户名"})
+		//c.JSON(consts.SUCCESS, model.Response{StatusCode: 1, StatusMsg: "非法用户名"})
 		return nil, errors.New("非法用户名")
 	}
 
 	// 验证密码合法性
 	if ok, _ := regexp.MatchString(consts.MIN_PASSWORD_PATTERN, password); !ok {
-		//c.JSON(http.StatusOK, model.Response{StatusCode: 1, StatusMsg: "密码长度6-32，由字母大小写下划线组成"})
+		//c.JSON(consts.SUCCESS, model.Response{StatusCode: 1, StatusMsg: "密码长度6-32，由字母大小写下划线组成"})
 		return nil, errors.New("密码长度6-32，由字母大小写下划线组成")
 	}
 
@@ -79,7 +79,7 @@ func Login(in *model.Login) (user *model.User, err error) {
 	}
 	//有这个用户名，检测密码是否对
 	if utils.EncryptPassword(in.Password, user.Salt) != user.Password {
-		return nil, errors.New("帐号或密码不对")
+		return nil, errors.New("帐号或密码错误")
 	}
 
 	return

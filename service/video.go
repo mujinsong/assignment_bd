@@ -4,6 +4,7 @@ import (
 	"assignment_bd/global"
 	"assignment_bd/model"
 	"errors"
+	"strconv"
 	"time"
 )
 
@@ -71,9 +72,16 @@ func GetVideoListByUserID(userID uint64, videoList *[]model.Video) (int, error) 
 //	return nil
 //}
 
-func FindVideos() []model.Video {
+/*
+返回按投稿时间倒序的视频列表 参数为最后一次获取的视频的时间
+*/
+func FindVideos(lasttime string) []model.Video {
 	var videos []model.Video
-	global.DB.Limit(30).Find(&videos)
+	last_time, err := strconv.Atoi(lasttime)
+	if err != nil {
+		return videos
+	}
+	global.DB.Table("videos").Order("created_at DESC").Limit(30).Where("created_at <= ?", time.Unix(int64(last_time), 0)).Find(&videos)
 	return videos
 }
 

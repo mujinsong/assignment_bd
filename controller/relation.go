@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
-	"net/http"
 )
 
 // RelationAction 用户之间的 关注或者取消关注的 关系操作
@@ -26,10 +25,10 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 	switch actionType {
 	case "1": // 进行关注操作
 		err = service.Follow(utils.StrToUint64(userID), followerID)
-		statusMsg = "关注成功"
+		statusMsg = "success"
 	case "2": // 进行取关操作
 		err = service.UnFollow(utils.StrToUint64(userID), followerID)
-		statusMsg = "取消关注成功"
+		statusMsg = "success"
 	default: // 客户端返回了错误的操作类型，抛出异常
 		err = errors.New("错误的操作类型")
 	}
@@ -42,7 +41,7 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 返回响应
-	c.JSON(http.StatusOK, model.UserInfoResponse{
+	c.JSON(consts.SUCCESS, model.UserInfoResponse{
 		Response: model.Response{
 			StatusCode: statusCode,
 			StatusMsg:  statusMsg,
@@ -56,7 +55,7 @@ func FollowList(ctx context.Context, c *app.RequestContext) {
 	// 定义一些变量
 	var err error
 	statusCode := consts.STATUS_SUCCESS
-	statusMsg := "获取关注列表成功"
+	statusMsg := "success"
 	userID := utils.StrToUint64(c.Query("user_id"))
 
 	// 在 service 进行逻辑处理
@@ -70,7 +69,7 @@ func FollowList(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 向客户端返回响应
-	c.JSON(http.StatusOK, model.UserListResponse{
+	c.JSON(consts.SUCCESS, model.UserListResponse{
 		Response: model.Response{
 			StatusCode: statusCode,
 			StatusMsg:  statusMsg,
@@ -83,7 +82,7 @@ func FollowList(ctx context.Context, c *app.RequestContext) {
 func FollowerList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	statusCode := consts.STATUS_SUCCESS
-	statusMsg := "获取粉丝列表成功"
+	statusMsg := "success"
 	userID := utils.StrToUint64(c.Query("user_id"))
 
 	users, err := service.GetFollowerList(userID) // 获取用户关注列表 service 层
@@ -94,7 +93,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 		fmt.Println(err)
 	}
 
-	c.JSON(http.StatusOK, model.UserListResponse{
+	c.JSON(consts.SUCCESS, model.UserListResponse{
 		Response: model.Response{
 			StatusCode: statusCode,
 			StatusMsg:  statusMsg,
@@ -107,7 +106,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 func FriendList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	statusCode := consts.STATUS_SUCCESS
-	statusMsg := "获取朋友列表成功"
+	statusMsg := "success"
 	userID := utils.StrToUint64(c.Query("user_id"))
 
 	friends, err := service.GetFriendList(userID) // 获取用户关注列表 service 层
@@ -118,7 +117,7 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 		fmt.Println(err)
 	}
 
-	c.JSON(http.StatusOK, model.FriendListResponse{
+	c.JSON(consts.SUCCESS, model.FriendListResponse{
 		Response: model.Response{
 			StatusCode: statusCode,
 			StatusMsg:  statusMsg,

@@ -42,7 +42,7 @@ const (
 )
 
 var MsgFlags = map[int]string{
-	SUCCESS:                    "ok",
+	SUCCESS:                    "success",
 	UPDATE_PASSWORD_SUCCESS:    "修改密码成功",
 	NOT_EXIST_IDENTIFIER:       "该第三方账号未绑定",
 	ERROR:                      "fail",
